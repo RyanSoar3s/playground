@@ -1,4 +1,4 @@
-import type { Languages } from "./languages";
+import type { Languages } from "./languages.model";
 
 export type ExecutionRequest = {
   language: Languages,

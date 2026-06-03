@@ -1,4 +1,4 @@
-import type { Languages, LanguageLabels } from "./languages";
+import type { Languages, LanguageLabels, Runtime } from "./languages.model";
 
 export type HealthResult = {
   status: "ok" | "error",
@@ -10,8 +10,9 @@ export type LanguageResult = {
   languages: Array<{
     id: Languages,
     label: LanguageLabels,
-    version: "bun",
-    enable: boolean
+    runtime: Runtime
+    version: string,
+    enabled: boolean
 
   }>
 
