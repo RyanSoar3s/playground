@@ -1,5 +1,6 @@
 import { Port } from "../config/env";
 import Health from "./routes/health";
+import Languages from "./routes/languages";
 
 const bootstrap = async () => {
   Bun.serve({
@@ -7,6 +8,10 @@ const bootstrap = async () => {
     routes: {
       "/api/health": {
         GET: async () => Health()
+
+      },
+      "/api/languages": {
+        GET: async () => Languages()
 
       }
 
