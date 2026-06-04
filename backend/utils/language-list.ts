@@ -1,11 +1,18 @@
+import type { Languages, Runtime } from "../src/models/languages.model";
 import type { LanguageResult } from "../src/models/response.model";
 
-const LanguageList: LanguageResult = {
+const allowedLanguages: Record<Languages, Runtime[]> = {
+  javascript: [ "nodejs", "bun" ],
+  typescript: [ "nodejs", "bun" ]
+
+};
+
+const languageList: LanguageResult = {
   languages: [
     {
       id: "javascript",
       label: "JavaScript",
-      runtime: "nodejs",
+      runtimes: [ "nodejs", "bun" ],
       version: "",
       enabled: true
 
@@ -13,7 +20,7 @@ const LanguageList: LanguageResult = {
     {
       id: "typescript",
       label: "TypeScript",
-      runtime: "tsc",
+      runtimes: [ "nodejs", "bun" ],
       version: "",
       enabled: false
 
@@ -23,4 +30,8 @@ const LanguageList: LanguageResult = {
 
 };
 
-export default LanguageList;
+export {
+  languageList as default,
+  allowedLanguages
+
+};
