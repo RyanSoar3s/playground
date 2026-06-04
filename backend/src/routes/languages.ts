@@ -1,8 +1,8 @@
 import { Origin } from "../../config/env";
-import LanguageList from "../../utils/language-list";
+import languageList from "../../utils/language-list";
 
 const Languages = () => {
-  const response = JSON.stringify(LanguageList);
+  const response = JSON.stringify(languageList);
 
   return new Response(response, {
     status: 200,
