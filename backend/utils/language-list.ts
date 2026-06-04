@@ -1,9 +1,8 @@
-import type { Languages, Runtime } from "../src/models/languages.model";
-import type { LanguageResult } from "../src/models/response.model";
+import type { Languages, Runtime } from "@models/languages.model";
+import type { LanguageResult } from "@models/response.model";
 
 const allowedLanguages: Record<Languages, Runtime[]> = {
-  javascript: [ "nodejs", "bun" ],
-  typescript: [ "nodejs", "bun" ]
+  javascript: [ "nodejs" ]
 
 };
 
@@ -12,17 +11,9 @@ const languageList: LanguageResult = {
     {
       id: "javascript",
       label: "JavaScript",
-      runtimes: [ "nodejs", "bun" ],
+      runtimes: [ "nodejs" ],
       version: "",
       enabled: true
-
-    },
-    {
-      id: "typescript",
-      label: "TypeScript",
-      runtimes: [ "nodejs", "bun" ],
-      version: "",
-      enabled: false
 
     }
 

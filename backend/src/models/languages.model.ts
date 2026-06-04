@@ -1,3 +1,3 @@
-export type Languages = "javascript" | "typescript";
-export type LanguageLabels = "JavaScript" | "TypeScript";
-export type Runtime = "nodejs" | "bun";
+export type Languages = "javascript";
+export type LanguageLabels = "JavaScript";
+export type Runtime = "nodejs";
