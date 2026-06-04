@@ -1,5 +1,5 @@
-import { Origin } from "../../config/env";
-import type { HealthResult } from "../models/response.model";
+import { Origin } from "@config/env";
+import type { HealthResult } from "@models/response.model";
 
 const Health = () => {
   const reponse = JSON.stringify({
