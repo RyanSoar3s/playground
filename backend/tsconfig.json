@@ -9,15 +9,15 @@
     "types": [ "bun" ],
     "rootDir": ".",
     "paths": {
-      "@src/*": [ "./ src/* " ],
-      "@routes/*": [ "./ src/routes/*" ],
-      "@models/*": [ "./ src/models/*" ],
-      "@errors/*": [ "./ src/errors/*" ],
-      "@services/*": [ "./ src/services/*" ],
-      "@runners/*": [ "./ src/runners/*" ],
-      "@validators/*": [ "./ src/validators/*" ],
-      "@utils/*": [ "./ utils/*" ],
-      "@config/*": [ "./ config/*" ]
+      "@src/*": [ "./src/* " ],
+      "@routes/*": [ "./src/routes/*" ],
+      "@models/*": [ "./src/models/*" ],
+      "@errors/*": [ "./src/errors/*" ],
+      "@services/*": [ "./src/services/*" ],
+      "@runners/*": [ "./src/runners/*" ],
+      "@validators/*": [ "./src/validators/*" ],
+      "@utils/*": [ "./utils/*" ],
+      "@config/*": [ "./config/*" ]
     },
 
     // Bundler mode
