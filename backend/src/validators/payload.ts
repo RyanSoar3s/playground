@@ -1,7 +1,8 @@
-import type { ExecutionRequest } from "../models/request.model";
-import type { ErrorResult } from "../models/response.model";
-import { allowedLanguages } from "../../utils/language-list";
-import type { Languages } from "../models/languages.model";
+import type { ExecutionRequest } from "@models/request.model";
+import type { ErrorResult } from "@models/response.model";
+import { allowedLanguages } from "@utils/language-list";
+import type { Languages } from "@models/languages.model";
+import HttpError from "@errors/http-error";
 
 const checkPayload = (payload: ExecutionRequest) => {
   const languageFieldValid =
@@ -9,7 +10,7 @@ const checkPayload = (payload: ExecutionRequest) => {
     typeof payload.language === "string"
 
   if (!languageFieldValid) {
-    throw new Error(JSON.stringify({
+    throw new HttpError(400, {
       status: "validation_error",
       message: "Undefined language",
       errors: [
@@ -23,14 +24,14 @@ const checkPayload = (payload: ExecutionRequest) => {
 
       ]
 
-    } satisfies ErrorResult));
+    } satisfies ErrorResult);
 
   }
 
   const allowedLanguagesKeys = Object.keys(allowedLanguages) as Languages[];
 
   if (!allowedLanguagesKeys.includes(payload.language)) {
-    throw new Error(JSON.stringify({
+    throw new HttpError(400, {
       status: "validation_error",
       message: "Unsupported language",
       errors: [
@@ -42,24 +43,24 @@ const checkPayload = (payload: ExecutionRequest) => {
 
       ]
 
-    } satisfies ErrorResult));
+    } satisfies ErrorResult);
 
   }
 
   if (!allowedLanguages[payload.language].includes(payload.runtime)) {
-    throw new Error(JSON.stringify({
+    throw new HttpError(400, {
       status: "validation_error",
       message: "Unsupported runtime",
       errors: [
         {
-          field: "runtitme",
+          field: "runtime",
           message: `Runtime '${payload.runtime}' is not supported`
 
         }
 
       ]
 
-    } satisfies ErrorResult));
+    } satisfies ErrorResult);
 
   }
 
@@ -68,7 +69,7 @@ const checkPayload = (payload: ExecutionRequest) => {
     && payload.code !== "";
 
   if (!codeFieldValid) {
-    throw new Error(JSON.stringify({
+    throw new HttpError(400, {
       status: "validation_error",
       message: "Invalid code",
       errors: [
@@ -82,14 +83,16 @@ const checkPayload = (payload: ExecutionRequest) => {
 
       ]
 
-    } satisfies ErrorResult));
+    } satisfies ErrorResult);
 
   }
 
-  const stdinFieldValid = typeof payload.stdin === "string";
+  const stdinFieldValid =
+    payload.stdin === undefined
+    || typeof payload.stdin === "string";
 
   if (!stdinFieldValid) {
-    throw new Error(JSON.stringify({
+    throw new HttpError(400, {
       status: "validation_error",
       message: "Invalid input",
       errors: [
@@ -101,7 +104,7 @@ const checkPayload = (payload: ExecutionRequest) => {
 
       ]
 
-    } satisfies ErrorResult));
+    } satisfies ErrorResult);
 
   }
 
