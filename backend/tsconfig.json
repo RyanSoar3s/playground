@@ -16,7 +16,7 @@
       "@services/*": [ "./src/services/*" ],
       "@runners/*": [ "./src/runners/*" ],
       "@validators/*": [ "./src/validators/*" ],
-      "@utils/*": [ "./utils/*" ],
+      "@utils/*": [ "./src/utils/*" ],
       "@config/*": [ "./config/*" ]
     },
 
