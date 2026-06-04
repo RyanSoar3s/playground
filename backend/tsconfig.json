@@ -1,12 +1,24 @@
 {
   "compilerOptions": {
     // Environment setup & latest features
-    "lib": ["ESNext"],
+    "lib": [ "ESNext" ],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
     "allowJs": true,
-    "types": ["bun"],
+    "types": [ "bun" ],
+    "rootDir": ".",
+    "paths": {
+      "@src/*": [ "./ src/* " ],
+      "@routes/*": [ "./ src/routes/*" ],
+      "@models/*": [ "./ src/models/*" ],
+      "@errors/*": [ "./ src/errors/*" ],
+      "@services/*": [ "./ src/services/*" ],
+      "@runners/*": [ "./ src/runners/*" ],
+      "@validators/*": [ "./ src/validators/*" ],
+      "@utils/*": [ "./ utils/*" ],
+      "@config/*": [ "./ config/*" ]
+    },
 
     // Bundler mode
     "moduleResolution": "bundler",
