@@ -10,7 +10,7 @@ export type LanguageResult = {
   languages: Array<{
     id: Languages,
     label: LanguageLabels,
-    runtime: Runtime
+    runtimes: Runtime[]
     version: string,
     enabled: boolean
 
@@ -30,6 +30,7 @@ export type ErrorStatus =
 export type ExecutionResult = {
   id: string,
   language: Languages,
+  runtime: Runtime,
   status: ExecutionStatus,
   stdout: string,
   stderr: string,
