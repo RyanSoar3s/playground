@@ -1,9 +1,10 @@
 import type { ExecutionStatus } from "@models/response.model";
+import readStreamWithLimit from "@utils/read-stream.util";
 
-const runner = async (commands: string[], stdin?: string) => {
+const runner = async (commands: { start: string[], kill: string[] }, stdin?: string) => {
   const start = performance.now();
 
-  const proc = Bun.spawn(commands, {
+  const proc = Bun.spawn(commands.start, {
     stdin: "pipe",
     stdout: "pipe",
     stderr: "pipe"
@@ -12,9 +13,9 @@ const runner = async (commands: string[], stdin?: string) => {
 
   let timedOut = false;
 
-  if (stdin !== undefined) {
+  if (stdin) {
     await proc.stdin.write(stdin);
-    
+
   }
 
   await proc.stdin.flush();
@@ -24,7 +25,7 @@ const runner = async (commands: string[], stdin?: string) => {
 
   const timeout = setTimeout(() => {
     timedOut = true;
-    proc.kill();
+    Bun.spawn(commands.kill);
 
   }, timeoutMs);
 
@@ -34,7 +35,7 @@ const runner = async (commands: string[], stdin?: string) => {
 
   const durationMs = performance.now() - start;
 
-  const stdout = await proc.stdout.text();
+  const stdout = await readStreamWithLimit(proc.stdout);
   const stderr = await proc.stderr.text();
 
   const exitCode = proc.exitCode;
