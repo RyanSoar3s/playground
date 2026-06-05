@@ -1,110 +1,34 @@
 import type { ExecutionRequest } from "@models/request.model";
 import type { ErrorResult } from "@models/response.model";
-import { allowedLanguages } from "@utils/language-list";
-import type { Languages } from "@models/languages.model";
 import HttpError from "@errors/http-error";
+import executionRequestSchema from "../schemas/schema";
 
 const checkPayload = (payload: ExecutionRequest) => {
-  const languageFieldValid =
-    payload.language &&
-    typeof payload.language === "string"
+  const safeParse = executionRequestSchema.safeParse(payload, { reportInput: true });
 
-  if (!languageFieldValid) {
-    throw new HttpError(400, {
+  if (!safeParse.success) {
+    const issues = safeParse.error.issues;
+
+    const errorResult: ErrorResult = {
       status: "validation_error",
-      message: "Undefined language",
-      errors: [
+      message: "Invalid fields",
+      errors: []
+
+    };
+
+    issues.forEach((error) => {
+      const path = error.path.map((p) => String(p));
+
+      errorResult.errors.push(
         {
-          field: "language",
-          message: (!payload.language) ?
-                    "Language cannot be empty" :
-                    "Language should be a string"
+          field: (path[0]) ? path[0] : "unknown",
+          message: error.message
 
-        }
+        } satisfies ErrorResult["errors"][number]);
 
-      ]
+    });
 
-    } satisfies ErrorResult);
-
-  }
-
-  const allowedLanguagesKeys = Object.keys(allowedLanguages) as Languages[];
-
-  if (!allowedLanguagesKeys.includes(payload.language)) {
-    throw new HttpError(400, {
-      status: "validation_error",
-      message: "Unsupported language",
-      errors: [
-        {
-          field: "language",
-          message: `Language '${payload.language}' is not supported`
-
-        }
-
-      ]
-
-    } satisfies ErrorResult);
-
-  }
-
-  if (!allowedLanguages[payload.language].includes(payload.runtime)) {
-    throw new HttpError(400, {
-      status: "validation_error",
-      message: "Unsupported runtime",
-      errors: [
-        {
-          field: "runtime",
-          message: `Runtime '${payload.runtime}' is not supported`
-
-        }
-
-      ]
-
-    } satisfies ErrorResult);
-
-  }
-
-  const codeFieldValid =
-    typeof payload.code === "string"
-    && payload.code !== "";
-
-  if (!codeFieldValid) {
-    throw new HttpError(400, {
-      status: "validation_error",
-      message: "Invalid code",
-      errors: [
-        {
-          field: "code",
-          message: (!payload.code) ?
-                    "Code cannot be empty" :
-                    "Code should be a string"
-
-        }
-
-      ]
-
-    } satisfies ErrorResult);
-
-  }
-
-  const stdinFieldValid =
-    payload.stdin === undefined
-    || typeof payload.stdin === "string";
-
-  if (!stdinFieldValid) {
-    throw new HttpError(400, {
-      status: "validation_error",
-      message: "Invalid input",
-      errors: [
-        {
-          field: "stdin",
-          message: "Input should be a string"
-
-        }
-
-      ]
-
-    } satisfies ErrorResult);
+    throw new HttpError(400, errorResult);
 
   }
 
