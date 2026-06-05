@@ -10,8 +10,11 @@ export type LanguageResult = {
   languages: Array<{
     id: Languages,
     label: LanguageLabels,
-    runtimes: Runtime[]
-    version: string,
+    runtimes: {
+      type: Runtime,
+      version: string
+
+    }[],
     enabled: boolean
 
   }>

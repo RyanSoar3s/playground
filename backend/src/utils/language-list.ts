@@ -11,8 +11,14 @@ const languageList: LanguageResult = {
     {
       id: "javascript",
       label: "JavaScript",
-      runtimes: [ "nodejs" ],
-      version: "",
+      runtimes: [
+        {
+          type: "nodejs",
+          version: "24"
+
+        }
+
+      ],
       enabled: true
 
     }
