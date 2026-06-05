@@ -32,7 +32,11 @@ export type ExecutionResult = {
   language: Languages,
   runtime: Runtime,
   status: ExecutionStatus,
-  stdout: string,
+  stdout: {
+    text: string,
+    truncated: boolean
+
+  },
   stderr: string,
   exitCode: number | null,
   durationMs: number
@@ -42,7 +46,7 @@ export type ExecutionResult = {
 export type ErrorResult = {
   status: ErrorStatus,
   message: string,
-  errors?: Array<{
+  errors: Array<{
     field: string,
     message: string
 
