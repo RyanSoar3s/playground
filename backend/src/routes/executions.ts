@@ -34,10 +34,11 @@ const Execution = async (req: BunRequest) => {
 
     const errorResult = (
       error instanceof HttpError
-      
+
     ) ? error.body : {
       status: "internal_error",
-      message: "An error occurred on the server."
+      message: "An error occurred on the server.",
+      errors: []
 
     } satisfies ErrorResult;
 
