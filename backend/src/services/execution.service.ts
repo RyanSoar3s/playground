@@ -45,10 +45,11 @@ export default class ExecutionService {
       if (!(await exists(temp))) await mkdir(temp, { recursive: true });
 
       await writeFile(filePathLocal, code);
-      const commands = [
+      const start = [
         "docker",
         "run",
         "--rm",
+        "--name", `runner_${id}`,
         "--network", "none",
         "--memory", "128m",
         "--cpus", "0.5",
@@ -57,9 +58,20 @@ export default class ExecutionService {
 
       ]
 
-      commands.push(...this.getCommands[lang][runtime](filePathLocal, extension));
+      start.push(...this.getCommands[lang][runtime](filePathLocal, extension));
 
-      let runnerResult = await runner(commands, stdin);
+      const kill = [
+        "docker",
+        "kill",
+        `runner_${id}`
+
+      ];
+
+      let runnerResult = await runner({
+        start,
+        kill
+
+      }, stdin);
 
       const result = {
         id,
@@ -77,7 +89,8 @@ export default class ExecutionService {
 
       throw new HttpError(500, {
         status: "internal_error",
-        message: "An error occurred on the server."
+        message: "An error occurred on the server.",
+        errors: []
 
       } satisfies ErrorResult);
 
