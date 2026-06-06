@@ -30,7 +30,7 @@ const executionRequestSchema = z.object({
       code: "invalid_type",
       expected: "runtime",
       path: [ "runtime" ],
-      message: `Runtime '${data.language}' is not valid`
+      message: `Runtime '${data.runtime}' is not valid`
 
     });
 
