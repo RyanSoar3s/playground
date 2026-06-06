@@ -33,7 +33,7 @@ const runner = async (commands: { start: string[], kill: string[] }, stdin?: str
 
   clearTimeout(timeout);
 
-  const durationMs = performance.now() - start;
+  const durationMs = Number((performance.now() - start).toFixed(2));
 
   const stdout = await readStreamWithLimit(proc.stdout);
   const stderr = await proc.stderr.text();
