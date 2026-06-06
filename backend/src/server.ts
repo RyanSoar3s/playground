@@ -15,7 +15,7 @@ const bootstrap = async () => {
         GET: async () => Languages()
 
       },
-      "/api/executions": {
+      "/api/execute": {
         POST: async (req) => await Execution(req)
 
       }
