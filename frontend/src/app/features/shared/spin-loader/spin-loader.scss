@@ -1,0 +1,16 @@
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+
+  }
+
+}
+
+:host {
+  display: block;
+  border: 3px solid #2b80ff91;
+  border-top-color: #51a2ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+}
