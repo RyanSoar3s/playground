@@ -1,0 +1,85 @@
+@use "../../../styles/util.scss" as *;
+
+:host {
+  @include dimension($height: auto, $width: 100%);
+  @include flex-full-center;
+  flex-direction: column;
+
+}
+
+.code-editor {
+  @include dimension($height: 80%, $width: 100%);
+  @include flex-full-center;
+
+  &__editor, &__output {
+    @include dimension($height: 800px !important, $width: 50%);
+
+  }
+
+  &__full-width {
+    width: 100%;
+
+  }
+
+  &--output-style {
+    background-color: #0f0f11;
+
+  }
+
+}
+
+.code-editor__output {
+  overflow: auto;
+  scrollbar-width: none;
+
+  &-header {
+    position: sticky;
+    top: 0px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #141416;
+    padding: 15px;
+    letter-spacing: 1px;
+    color: #71717a;
+    border-bottom: 1px solid #2d2d34;
+
+    & h5 {
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 7px 0px;
+
+    }
+
+    & p {
+      font-size: 0.9em;
+
+    }
+
+  }
+
+}
+
+.code-editor__info {
+  display: flex;
+  gap: 5px;
+  padding: 7px;
+  border-radius: 15px;
+
+  &--loader {
+    background-color: #162556;
+
+  }
+
+  & p.code-editor__running {
+    color: #51a2ff;
+    font-size: 0.85em;
+    font-weight: 600;
+
+  }
+
+}
+
+.code-editor__txt {
+  padding: 20px 15px;
+
+}
