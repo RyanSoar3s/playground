@@ -8,8 +8,9 @@
 
 :host {
   display: block;
-  border: 3px solid #2b80ff91;
+  border-color: #2b80ff91;
   border-top-color: #51a2ff;
+  border-style: solid;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 
