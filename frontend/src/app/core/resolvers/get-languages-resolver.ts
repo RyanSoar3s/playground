@@ -13,9 +13,11 @@ export const getLanguagesResolver: ResolveFn<void> = () => {
     tap((data) => languagesServices.setLanguages(data)),
     map(() => undefined),
     catchError((err) => {
-      const error = (typeof err === "object") ? JSON.stringify(err) : err;
+      const error = `error: ${(typeof err === "object") ? JSON.stringify(err) : err}`;
 
-      console.error(`error: ${error}`);
+      console.error(error);
+
+      languagesServices.setErrors(error);
 
       return of(undefined)
 
