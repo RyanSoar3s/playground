@@ -1,15 +1,44 @@
 @let XL = responsive.isXl();
 @let LG = responsive.isLg();
 
+@if (isLoadingLanguageData()) {
+  <div [class]="'loading-data'">
+    <app-spin-loader [height]="'300px'" [width]="'300px'" [borderWidth]="'8px'"></app-spin-loader>
+
+  </div>
+
+}
+
 <section [class]="'options'">
-  <p>Linguagem</p>
-  <div>{{ languageSelected() }}</div>
+  <div [class]="'options__box-selections'">
+    @for (box of boxSelection; track $index) {
+      <div [class]="'options__box-wrapper'">
+        <p>{{ box.name }}</p>
+        <div [class]="'selection'" (click)="void selectBox($index)">
+          <span>{{ box.label() }}</span>
 
-  <p>Runtime</p>
-  <div>{{ runtimeSelected() }}</div>
+          <div
+            [class]="'icon-caret-down'"
+            [class.rotate-up]="box.interacted && box.isCarretRotate"
+            [class.rotate-down]="box.interacted && !box.isCarretRotate"
 
-  <p>Theme</p>
-  <div>{{ themeSelected() }}</div>
+          >
+            <fa-icon [icon]="faCaretDown"></fa-icon>
+
+          </div>
+
+        </div>
+
+        @if (box.isCarretRotate) {
+
+
+        }
+
+      </div>
+
+    }
+
+  </div>
 
 
 </section>
@@ -23,22 +52,18 @@
 
   >
   <nu-monaco-editor
-    [class]="{
-      'code-editor__editor': true,
-      'code-editor__full-width': !(XL || LG)
-
-    }"
+    [class]="'code-editor__editor'"
+    [class.code-editor__full-width]="!(XL || LG)"
     [options]="configs()!"
     [autoFormat]="true"
     [(ngModel)]="code"
 
   ></nu-monaco-editor>
-  <div [class]=" {
-    'code-editor__output': true,
-    'code-editor--output-style': true,
-    'code-editor__full-width': !(XL || LG)
+  <div
+    [class]="'code-editor__output code-editor--output-style'"
+    [class.code-editor__full-width]="!(XL || LG)"
 
-  }">
+  >
     <div [class]="'code-editor__output-header'">
       <h5>Console / Saída</h5>
 

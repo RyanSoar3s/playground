@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, Signal, effect, OnDestroy, EffectRef } from '@angular/core';
 import { NuMonacoEditorComponent } from "@ng-util/monaco-editor"
 import { GetLanguages } from '../../../core/services/get-languages';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
+import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { SpinLoader } from '../../shared/spin-loader/spin-loader';
 import { Responsive } from '../../../core/services/responsive';
+import { LanguageList } from '../../../models/language-list.model';
 
 @Component({
   selector: 'app-code-editor',
@@ -22,20 +24,31 @@ import { Responsive } from '../../../core/services/responsive';
   styleUrl: './code-editor.scss'
 
 })
-export class CodeEditor implements OnInit {
-  protected readonly themes = [ "vs-dark", "vs-light", "hc-black", "hc-light" ];
-
+export class CodeEditor implements OnDestroy {
   protected responsive = inject(Responsive);
-
   private languagesServices = inject(GetLanguages);
-  protected languages = this.languagesServices.languaguages;
 
-  protected languageSelected = computed(() => this.languages()?.languages[0].label);
-  protected runtimeSelected = computed(() => this.languages()?.languages[0].runtimes[0].type);
-  protected themeSelected = signal(this.themes[0]);
+  protected readonly themes = signal([ "vs-dark", "vs-light", "hc-black", "hc-light" ]);
 
-  protected readonly isLoadingLanguageData = signal((this.languages()) ? false : true);
-  protected readonly isErrorLanguageData = signal(false);
+  private languages = this.languagesServices.languages;
+  private errors = this.languagesServices.errors;
+
+  private languagesInfo = signal<LanguageList["languages"][number] | undefined>(undefined);
+
+  private runtimeListCurrent = signal(this.languagesInfo()?.runtimes);
+  private theme = signal(this.themes()[0]);
+  private fontSize = signal(16);
+
+  protected languageSelected = computed(() => this.languagesInfo()?.label);
+  protected runtimeSelected = computed(() => this.languagesInfo()?.runtimes[0].type);
+  protected themeSelected = computed(() => this.theme());
+  protected fonteSizeSelected = computed(() => this.fontSize());
+
+  protected languageList = computed(() => this.languages()?.languages.map((data) => data.label));
+  protected runtimeList = computed(() => this.runtimeListCurrent());
+
+  protected readonly isLoadingLanguageData = computed(() => (this.languages()) ? false : true);
+  protected readonly isErrorLanguageData = computed(() => (this.errors()) ? true : false);
 
   protected readonly isLoadingCodeExecution = signal(false);
   protected readonly isErrorCodeExecution = signal(false);
@@ -48,10 +61,12 @@ export class CodeEditor implements OnInit {
     if (langs) {
       return {
         language: langs.languages[0].id,
-        theme: this.themes[0],
+        theme: this.themeSelected(),
+        fontFamily: "Fira Code",
+        fontSize: this.fonteSizeSelected(),
+        fontLigatures: true,
         automaticLayout: true,
-        glyphMargin: false,
-        folding: false,
+        folding: true,
         overviewRulerLanes: 0,
         hideCursorInOverviewRuler: true
 
@@ -64,8 +79,78 @@ export class CodeEditor implements OnInit {
   });
 
   protected readonly faCircleCheck = faCircleCheck;
+  protected readonly faCaretDown = faCaretDown;
 
-  ngOnInit(): void {
+  protected boxSelection: Array<{
+    name: string,
+    label: Signal<string | undefined>,
+    list: Signal<(string | { type: string, version: string })[] | undefined>
+    isCarretRotate: boolean,
+    interacted: boolean
+
+  }> = [
+    {
+      name: "linguagem",
+      label: this.languageSelected,
+      list: this.languageList,
+      isCarretRotate: false,
+      interacted: false
+
+
+
+    },
+    {
+      name: "runtime",
+      label: this.runtimeSelected,
+      list: this.runtimeList,
+      isCarretRotate: false,
+      interacted: false
+
+
+    },
+    {
+      name: "tema",
+      label: this.themeSelected,
+      list: this.themes,
+      isCarretRotate: false,
+      interacted: false
+
+
+    }
+
+  ];
+
+  private effectRef!: EffectRef;
+
+  constructor() {
+    this.effectRef = effect(() => {
+      const lang = this.languages();
+
+      if (lang && !this.languagesInfo()) {
+        this.languagesInfo.set(lang.languages[0]);
+
+      }
+
+    })
+
+  }
+
+  selectBox(idx: number): void {
+    this.boxSelection.forEach((el, index) => {
+      if (idx === index) {
+        el.isCarretRotate = !el.isCarretRotate;
+
+        if (!el.interacted) el.interacted = true;
+
+      }
+      else el.isCarretRotate = false;
+
+    })
+
+  }
+
+  ngOnDestroy(): void {
+    if (this.effectRef) this.effectRef.destroy();
 
   }
 
