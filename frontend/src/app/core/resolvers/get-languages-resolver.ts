@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { Api } from '../services/api';
-import { LanguageList } from '../../models/language-list.model';
 import { map, take, tap, catchError, of } from 'rxjs';
 import { GetLanguages } from '../services/get-languages';
 
@@ -17,7 +16,7 @@ export const getLanguagesResolver: ResolveFn<void> = () => {
       const error = (typeof err === "object") ? JSON.stringify(err) : err;
 
       console.error(`error: ${error}`);
-      
+
       return of(undefined)
 
     })
