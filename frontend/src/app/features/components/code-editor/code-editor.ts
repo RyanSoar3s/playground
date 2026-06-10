@@ -39,7 +39,6 @@ export class CodeEditor implements OnDestroy {
 
   private languagesInfo = signal<LanguageList["languages"][number] | undefined>(undefined);
 
-  private runtimeListCurrent = signal(this.languagesInfo()?.runtimes);
   private theme = signal(this.themes()[0]);
   private fontSize = signal(16);
 
@@ -49,7 +48,7 @@ export class CodeEditor implements OnDestroy {
   protected fonteSizeSelected = computed(() => this.fontSize());
 
   protected languageList = computed(() => this.languages()?.languages.map((data) => data.label));
-  protected runtimeList = computed(() => this.runtimeListCurrent());
+  protected runtimeList = computed(() => this.languagesInfo()?.runtimes);
 
   protected readonly isLoadingLanguageData = computed(() => (this.languages()) ? false : true);
   protected readonly isErrorLanguageData = computed(() => (this.errors()) ? true : false);
@@ -130,6 +129,7 @@ export class CodeEditor implements OnDestroy {
 
       if (lang && !this.languagesInfo()) {
         this.languagesInfo.set(lang.languages[0]);
+        console.log(this.languagesInfo())
 
       }
 
