@@ -21,7 +21,11 @@ import { LanguageList } from '../../../models/language-list.model';
 
   ],
   templateUrl: './code-editor.html',
-  styleUrl: './code-editor.scss'
+  styleUrl: './code-editor.scss',
+  host: {
+    '(click)': 'void closeMenu($event)'
+
+  }
 
 })
 export class CodeEditor implements OnDestroy {
@@ -85,7 +89,7 @@ export class CodeEditor implements OnDestroy {
     name: string,
     label: Signal<string | undefined>,
     list: Signal<(string | { type: string, version: string })[] | undefined>
-    isCarretRotate: boolean,
+    isOpen: boolean,
     interacted: boolean
 
   }> = [
@@ -93,17 +97,15 @@ export class CodeEditor implements OnDestroy {
       name: "linguagem",
       label: this.languageSelected,
       list: this.languageList,
-      isCarretRotate: false,
+      isOpen: false,
       interacted: false
-
-
 
     },
     {
       name: "runtime",
       label: this.runtimeSelected,
       list: this.runtimeList,
-      isCarretRotate: false,
+      isOpen: false,
       interacted: false
 
 
@@ -112,7 +114,7 @@ export class CodeEditor implements OnDestroy {
       name: "tema",
       label: this.themeSelected,
       list: this.themes,
-      isCarretRotate: false,
+      isOpen: false,
       interacted: false
 
 
@@ -138,14 +140,34 @@ export class CodeEditor implements OnDestroy {
   selectBox(idx: number): void {
     this.boxSelection.forEach((el, index) => {
       if (idx === index) {
-        el.isCarretRotate = !el.isCarretRotate;
+        el.isOpen = !el.isOpen;
 
         if (!el.interacted) el.interacted = true;
 
       }
-      else el.isCarretRotate = false;
+      else el.isOpen = false;
 
     })
+
+  }
+
+  protected closeMenu(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    const containerWrapper = target.closest("[box-name]");
+
+    this.boxSelection.forEach((box) => {
+      if (
+        box.isOpen &&
+        containerWrapper?.getAttribute("box-name") !== box.name
+
+      ) {
+
+        box.isOpen = false;
+
+      }
+
+    });
 
   }
 
