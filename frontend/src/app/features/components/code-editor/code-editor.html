@@ -33,7 +33,7 @@
           @if (box.isOpen) {
             <ul [class]="'options-list'">
               @for (el of box.list(); track $index) {
-                <li (click)="box.isOpen = !box.isOpen">
+                <li (click)="box.isOpen = !box.isOpen; void selectOption(box.name, (typeof el === 'object') ? el.type : el)">
                   @if (typeof el === "object") {
                     {{ el.type }} (v{{ el.version }})
 

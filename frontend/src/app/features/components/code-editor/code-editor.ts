@@ -8,7 +8,7 @@ import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { SpinLoader } from '../../shared/spin-loader/spin-loader';
 import { Responsive } from '../../../core/services/responsive';
-import { LanguageList } from '../../../models/language-list.model';
+import { LanguageLabels, LanguageList, Runtime } from '../../../models/language-list.model';
 
 @Component({
   selector: 'app-code-editor',
@@ -37,18 +37,20 @@ export class CodeEditor implements OnDestroy {
   private languages = this.languagesServices.languages;
   private errors = this.languagesServices.errors;
 
-  private languagesInfo = signal<LanguageList["languages"][number] | undefined>(undefined);
+  private languagesLabel = signal<LanguageList["languages"][number]["label"] | undefined>(undefined);
+  private languageRuntimes = signal<LanguageList["languages"][number]["runtimes"] | undefined>(undefined);
+  private languageRuntimeSelected = signal<LanguageList["languages"][number]["runtimes"][number]["type"] | undefined>(undefined);
 
   private theme = signal(this.themes()[0]);
   private fontSize = signal(16);
 
-  protected languageSelected = computed(() => this.languagesInfo()?.label);
-  protected runtimeSelected = computed(() => this.languagesInfo()?.runtimes[0].type);
+  protected languageSelected = computed(() => this.languagesLabel());
+  protected runtimeSelected = computed(() => this.languageRuntimeSelected());
   protected themeSelected = computed(() => this.theme());
   protected fonteSizeSelected = computed(() => this.fontSize());
 
   protected languageList = computed(() => this.languages()?.languages.map((data) => data.label));
-  protected runtimeList = computed(() => this.languagesInfo()?.runtimes);
+  protected runtimeList = computed(() => this.languageRuntimes());
 
   protected readonly isLoadingLanguageData = computed(() => (this.languages()) ? false : true);
   protected readonly isErrorLanguageData = computed(() => (this.errors()) ? true : false);
@@ -63,7 +65,7 @@ export class CodeEditor implements OnDestroy {
 
     if (langs) {
       return {
-        language: langs.languages[0].id,
+        language: this.languageSelected(),
         theme: this.themeSelected(),
         fontFamily: "Fira Code",
         fontSize: this.fonteSizeSelected(),
@@ -127,9 +129,10 @@ export class CodeEditor implements OnDestroy {
     this.effectRef = effect(() => {
       const lang = this.languages();
 
-      if (lang && !this.languagesInfo()) {
-        this.languagesInfo.set(lang.languages[0]);
-        console.log(this.languagesInfo())
+      if (lang && !this.languagesLabel()) {
+        this.languagesLabel.set(lang.languages[0].label);
+        this.languageRuntimes.set(lang.languages[0].runtimes);
+        this.languageRuntimeSelected.set(lang.languages[0].runtimes[0].type);
 
       }
 
@@ -148,6 +151,56 @@ export class CodeEditor implements OnDestroy {
       else el.isOpen = false;
 
     })
+
+  }
+
+  selectOption(field: string, opt: string): void {
+    switch (field) {
+      case "linguagem":
+        this.changeLanguage(opt);
+        break;
+
+      case "runtime":
+        this.changeRuntime(opt);
+        break;
+
+      default:
+        this.changeTheme(opt);
+        break;
+
+    }
+
+  }
+
+  private changeLanguage(label: string): void {
+    this.languagesLabel.set(label as LanguageLabels);
+
+    const langs = this.languages();
+
+    if (langs) {
+      const lang = langs.languages.filter((lang) => lang.label === label);
+
+      if (lang.length !== 0) {
+        const runtimes = lang[0].runtimes;
+
+        this.languageRuntimes.set(runtimes);
+
+      }
+
+    }
+
+
+  }
+
+  private changeRuntime(runtime: string): void {
+    this.languageRuntimeSelected.set(runtime as Runtime);
+
+  }
+
+  private changeTheme(theme: string): void {
+    const configs = this.configs();
+
+    if (configs) this.theme.set(theme);
 
   }
 
