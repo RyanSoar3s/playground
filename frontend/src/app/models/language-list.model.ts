@@ -1,7 +1,7 @@
-type Languages = "javascript";
-type LanguageLabels = "JavaScript";
+export type Languages = "javascript";
+export type LanguageLabels = "JavaScript";
 
-type Runtime = "nodejs";
+export type Runtime = "nodejs";
 
 export type LanguageList = {
   languages: Array<{
