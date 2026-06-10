@@ -3,7 +3,7 @@
 
 @if (isLoadingLanguageData()) {
   <div [class]="'loading-data'">
-    <app-spin-loader [height]="'300px'" [width]="'300px'" [borderWidth]="'8px'"></app-spin-loader>
+    <app-spin-loader [height]="'130px'" [width]="'130px'" [borderWidth]="'8px'"></app-spin-loader>
 
   </div>
 
@@ -12,15 +12,15 @@
 <section [class]="'options'">
   <div [class]="'options__box-selections'">
     @for (box of boxSelection; track $index) {
-      <div [class]="'options__box-wrapper'">
+      <div [class]="'options__box-wrapper'" [attr.box-name]="box.name">
         <p>{{ box.name }}</p>
-        <div [class]="'selection'" (click)="void selectBox($index)">
+        <div [class]="'selection'" [class.open-menu]="box.isOpen" (click)="void selectBox($index)">
           <span>{{ box.label() }}</span>
 
           <div
             [class]="'icon-caret-down'"
-            [class.rotate-up]="box.interacted && box.isCarretRotate"
-            [class.rotate-down]="box.interacted && !box.isCarretRotate"
+            [class.rotate-up]="box.interacted && box.isOpen"
+            [class.rotate-down]="box.interacted && !box.isOpen"
 
           >
             <fa-icon [icon]="faCaretDown"></fa-icon>
@@ -29,10 +29,29 @@
 
         </div>
 
-        @if (box.isCarretRotate) {
+        <div>
+          @if (box.isOpen) {
+            <ul [class]="'options-list'">
+              @for (el of box.list(); track $index) {
+                <li (click)="box.isOpen = !box.isOpen">
+                  @if (typeof el === "object") {
+                    {{ el.type }} (v{{ el.version }})
 
+                  }
+                  @else {
+                    {{ el }}
 
-        }
+                  }
+
+                </li>
+
+              }
+
+            </ul>
+
+          }
+
+        </div>
 
       </div>
 
