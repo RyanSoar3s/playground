@@ -1,4 +1,5 @@
 @use "../../../styles/util.scss" as *;
+@use "sass:list";
 
 @keyframes rotateUp {
   from {
@@ -26,32 +27,30 @@
 
 :host {
   @include dimension($height: auto, $width: 100%);
+  @include relative;
   @include flex-full-center;
-  flex-direction: column;
-  position: relative;
+  @include flex-col;
 
 }
 
 .loading-data {
+  @include dimension($height: 100%, $width: 100%);
+  @include absolute;
   @include flex-full-center;
-  background-color: #0000003a;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  z-index: 999;
+  @include bg($color: #0000003a);
+  @include z($index: 999);
 
 }
 
 .options {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  margin: 30px 0px;
-  padding: 0px 40px;
+  @include dimension($height: 100%, $width: 100%);
+  @include flex;
+  @include m($margin: 30px 0px);
+  @include p($padding: 0px 40px);
 
   &__box-selections {
-    display: flex;
-    justify-content: space-between;
+    @include flex;
+    @include justify-between;
     flex-wrap: wrap;
     gap: 20px;
 
@@ -61,39 +60,39 @@
 }
 
 .options__box-wrapper {
-  display: flex;
-  flex-direction: column;
+  @include flex;
+  @include flex-col;
   gap: 7px;
 
   p {
-    font-size: 11px;
-    text-transform: uppercase;
+    @include c($color: #8a8a93);
+    @include f-size($size: 11px);
+    @include f-weight($weight: 600);
+    @include uppercase;
     letter-spacing: 0.5px;
-    color: #8a8a93;
-    font-weight: 600;
 
   }
 
   .selection {
-    background-color: #252529;
-    position: relative;
-    height: 38px;
-    min-width: 160px;
-    color: #fff;
-    border: 1px solid #3f3f46;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include bg($color: #252529);
+    @include relative;
+    @include flex;
+    @include align-center;
+    @include justify-between;
+    @include h($height: 38px);
+    @include min-w($width: 160px);
+    @include c-white;
+    @include border(1px, solid, #3f3f46);
+    @include p($padding: 8px 12px);
+    @include radius($radius: 6px);
+    @include f-size($size: 13px);
     transition: border-color 0.2s, background-color 0.2s;
-    user-select: none;
-    cursor: pointer;
+    @include select-none;
+    @include pointer;
 
     &:hover {
-      background-color: #2d2d33;
-      border-color: #52525b;
+      @include bg($color: #2d2d33);
+      @include border(null, null, #52525b);
 
     }
 
@@ -102,8 +101,8 @@
 }
 
 .open-menu {
-  border-color: #3b82f6 !important;
-  box-shadow: 0px 0px 0px 2px #3b82f633;
+  @include border(null, null, #3b82f6 !important);
+  @include shadow($value: 0px 0px 0px 2px #3b82f633);
 
 }
 
@@ -129,12 +128,12 @@
   }
 
   &__full-width {
-    width: 100%;
+    @include w($width: 100%);
 
   }
 
   &--output-style {
-    background-color: #0f0f11;
+    @include bg($color: #0f0f11);
 
   }
 
@@ -142,25 +141,25 @@
 
 .options-list {
   @include dimension($height: auto, $width: 160px);
-  position: absolute;
-  background-color: #1f1f23;
-  border: 1px solid #3f3f46;
-  border-radius: 6px;
-  box-shadow: 0px 10px 15px -3px #00000080;
-  max-height: 250px;
-  overflow-y: auto;
-  cursor: pointer;
-  user-select: none;
+  @include absolute;
+  @include bg($color: #1f1f23);
+  @include border(1px, solid, #3f3f46);
+  @include radius($radius: 6px);
+  @include shadow($value: 0px 10px 15px -3px #00000080);
+  @include max-h($height: 250px);
+  @include overflow($axis: y, $value: auto);
+  @include pointer;
+  @include select-none;
   transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
-  z-index: 10;
+  @include z($index: 10);
 
   li {
-    padding: 8px 12px;
-    font-size: 0.9em;
+    @include p($padding: 8px 12px);
+    @include f-size($size: 0.9em);
 
     &:hover {
-      background-color: #2d2d33;
-      color: white;
+      @include bg($color: #2d2d33);
+      @include c-white;
 
     }
 
@@ -169,34 +168,34 @@
 }
 
 .option-selected {
-  background-color: #3b82f6 !important;
+  @include bg($color: #3b82f6 !important);
 
 }
 
 .code-editor__output {
-  overflow: auto;
+  @include overflow($axis: null, $value: auto);
   scrollbar-width: none;
 
   &-header {
-    position: sticky;
+    @include bg($color: #141416);
+    @include c($color: #71717a);
+    @include sticky;
+    @include flex;
+    @include justify-between;
     top: 0px;
-    display: flex;
-    justify-content: space-between;
-    background-color: #141416;
-    padding: 15px;
+    @include p($padding: 15px);
     letter-spacing: 1px;
-    color: #71717a;
     border-bottom: 1px solid #2d2d34;
 
     & h5 {
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 7px 0px;
+      @include f-weight($weight: 700);
+      @include uppercase;
+      @include p($padding: 7px 0px);
 
     }
 
     & p {
-      font-size: 0.9em;
+      @include f-size($size: 0.9em);
 
     }
 
@@ -205,26 +204,26 @@
 }
 
 .code-editor__info {
-  display: flex;
+  @include flex;
   gap: 5px;
-  padding: 7px;
-  border-radius: 15px;
+  @include p($padding: 7px);
+  @include radius($radius: 15px);
 
   &--loader {
-    background-color: #162556;
+    @include bg($color: #162556);
 
   }
 
   & p.code-editor__running {
-    color: #51a2ff;
-    font-size: 0.85em;
-    font-weight: 600;
+    @include c($color: #51a2ff);
+    @include f-size($size: 0.85em);
+    @include f-weight($weight: 600);
 
   }
 
 }
 
 .code-editor__output-msg {
-  padding: 20px 15px;
+  @include p($padding: 20px 15px);
 
 }
