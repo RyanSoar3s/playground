@@ -115,6 +115,15 @@
   .options__box-font-selector {
     @include gap($gap: 10px);
 
+     .options__box-font-value {
+      @include c($color: #3b82f6);
+      @include min-w($width: 30px);
+      @include f-size($size: 12px);
+      @include f-weight($weight: bold);
+      text-align: right;
+
+    }
+
   }
 
 }
