@@ -5,7 +5,7 @@ import { GetLanguages } from '../../../core/services/get-languages';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { SpinLoader } from '../../shared/spin-loader/spin-loader';
 import { Responsive } from '../../../core/services/responsive';
 import { LanguageLabels, LanguageList, Runtime } from '../../../models/language-list.model';
@@ -42,12 +42,11 @@ export class CodeEditor implements OnDestroy {
   private languageRuntimeSelected = signal<LanguageList["languages"][number]["runtimes"][number]["type"] | undefined>(undefined);
 
   private theme = signal(this.themes()[0]);
-  private fontSize = signal(16);
+  fontSize = signal(16);
 
   protected languageSelected = computed(() => this.languagesLabel());
   protected runtimeSelected = computed(() => this.languageRuntimeSelected());
   protected themeSelected = computed(() => this.theme());
-  protected fonteSizeSelected = computed(() => this.fontSize());
 
   protected languageList = computed(() => this.languages()?.languages.map((data) => data.label));
   protected runtimeList = computed(() => this.languageRuntimes());
@@ -71,7 +70,7 @@ export class CodeEditor implements OnDestroy {
         language: (this.languageSelected())?.toLowerCase(),
         theme: this.themeSelected(),
         fontFamily: "Fira Code",
-        fontSize: this.fonteSizeSelected(),
+        fontSize: this.fontSize(),
         fontLigatures: true,
         automaticLayout: true,
         folding: true,
@@ -88,6 +87,7 @@ export class CodeEditor implements OnDestroy {
 
   protected readonly faCircleCheck = faCircleCheck;
   protected readonly faCaretDown = faCaretDown;
+  protected readonly faCaretRight = faCaretRight;
 
   protected boxSelection: Array<{
     name: string,

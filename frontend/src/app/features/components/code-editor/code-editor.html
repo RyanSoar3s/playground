@@ -13,8 +13,8 @@
   <div [class]="'options__box-selections'">
     @for (box of boxSelection; track $index) {
       <div [class]="'options__box-wrapper'" [attr.box-name]="box.name">
-        <p>{{ box.name }}</p>
-        <div [class]="'options__box-selection'" [class.open-menu]="box.isOpen" (click)="void selectBox($index)">
+        <p [class]="'options__box-name'">{{ box.name }}</p>
+        <div [class]="'options__box-input options__box-selection'" [class.open-menu]="box.isOpen" (click)="void selectBox($index)">
           <span>{{ box.label() }}</span>
 
           <div
@@ -58,8 +58,42 @@
 
     }
 
+    <div [class]="'options__box-wrapper'">
+      <p [class]="'options__box-name'">fonte</p>
+      <div [class]="'options__box-input options__box-font-selector'">
+        <input
+          type="range"
+          name="range"
+          id="range"
+          min="10"
+          max="26"
+          [ngModel]="fontSize()"
+          (ngModelChange)="fontSize.set($event)"
+
+        >
+        <p [class]="'options__box-font'">
+          {{ fontSize() }}px
+
+        </p>
+
+      </div>
+
+    </div>
+
   </div>
 
+  <button
+    [class]="'options__btn-run'"
+    [style]="{
+      'width': !(XL || LG) ? '100%' : 'auto'
+
+    }"
+
+  >
+    <fa-icon [icon]="faCaretRight"></fa-icon>
+    <span>Executar Código</span>
+
+  </button>
 
 </section>
 

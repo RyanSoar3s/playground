@@ -45,14 +45,18 @@
 .options {
   @include dimension($height: 100%, $width: 100%);
   @include flex;
+  @include align-center;
+  @include justify-between;
+  @include flex-wrap;
+  @include gap($gap: 27px);
   @include m($margin: 30px 0px);
   @include p($padding: 0px 40px);
 
   &__box-selections {
     @include flex;
     @include justify-between;
-    flex-wrap: wrap;
-    gap: 20px;
+    @include flex-wrap;
+    @include gap($gap: 20px);
 
   }
 
@@ -62,9 +66,9 @@
 .options__box-wrapper {
   @include flex;
   @include flex-col;
-  gap: 7px;
+  @include gap($gap: 7px);
 
-  p {
+  p.options__box-name {
     @include c($color: #8a8a93);
     @include f-size($size: 11px);
     @include f-weight($weight: 600);
@@ -73,7 +77,7 @@
 
   }
 
-  .options__box-selection {
+  .options__box-input {
     @include bg($color: #252529);
     @include relative;
     @include flex;
@@ -86,6 +90,16 @@
     @include p($padding: 8px 12px);
     @include radius($radius: 6px);
     @include f-size($size: 13px);
+
+    input[type="range"] {
+      @include w($width: 100px);
+      @include pointer;
+
+    }
+
+  }
+
+  .options__box-selection {
     @include select-none;
     @include pointer;
     transition: border-color 0.2s, background-color 0.2s;
@@ -95,6 +109,11 @@
       @include border(null, null, #52525b);
 
     }
+
+  }
+
+  .options__box-font-selector {
+    @include gap($gap: 10px);
 
   }
 
@@ -146,6 +165,27 @@
       @include bg($color: #3b82f6 !important);
 
     }
+
+  }
+
+}
+
+.options__btn-run {
+  @include bg(#10b981);
+  @include c-white;
+  @include flex-full-center;
+  @include h($height: 40px);
+  @include border(0px, none, transparent);
+  @include p($padding: 10px 20px);
+  @include radius($radius: 6px);
+  @include f-size($size: 14px);
+  @include f-weight($weight: 600);
+  @include pointer;
+  @include shadow($value: 0px 2px 4px #10b98133);
+  transition: background-color 0.2s, transform 0.1s;
+
+  &:hover {
+    @include bg(#059669);
 
   }
 
@@ -205,7 +245,7 @@
 
 .code-editor__info {
   @include flex;
-  gap: 5px;
+  @include gap($gap: 5px);
   @include p($padding: 7px);
   @include radius($radius: 15px);
 
