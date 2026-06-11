@@ -26,6 +26,12 @@
 
 }
 
+@mixin block {
+  display: block;
+
+}
+
+
 @mixin flex {
   display: flex;
 
@@ -50,6 +56,16 @@
 
 @mixin justify-between {
   justify-content: space-between;
+
+}
+
+@mixin flex-wrap {
+  flex-wrap: wrap;
+
+}
+
+@mixin gap($gap) {
+  gap: $gap;
 
 }
 
