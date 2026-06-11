@@ -14,11 +14,10 @@
     @for (box of boxSelection; track $index) {
       <div [class]="'options__box-wrapper'" [attr.box-name]="box.name">
         <p>{{ box.name }}</p>
-        <div [class]="'selection'" [class.open-menu]="box.isOpen" (click)="void selectBox($index)">
+        <div [class]="'options__box-selection'" [class.open-menu]="box.isOpen" (click)="void selectBox($index)">
           <span>{{ box.label() }}</span>
 
           <div
-            [class]="'icon-caret-down'"
             [class.rotate-up]="box.interacted && box.isOpen"
             [class.rotate-down]="box.interacted && !box.isOpen"
 
@@ -34,13 +33,13 @@
             <ul [class]="'options-list'">
               @for (el of box.list(); track $index) {
                 <li
-                [class.option-selected]="
-                  el.includes(languageSelected()!) ||
-                  el.includes(runtimeSelected()!) ||
-                  el.includes(themeSelected()!)
+                  [class.option-selected]="
+                    el.includes(languageSelected()!) ||
+                    el.includes(runtimeSelected()!) ||
+                    el.includes(themeSelected()!)
 
-                "
-                (click)="box.isOpen = !box.isOpen; void selectOption(box.name, el)"
+                  "
+                  (click)="box.isOpen = !box.isOpen; void selectOption(box.name, el)"
 
                 >
                   {{ el }}

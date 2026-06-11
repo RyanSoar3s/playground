@@ -73,7 +73,7 @@
 
   }
 
-  .selection {
+  .options__box-selection {
     @include bg($color: #252529);
     @include relative;
     @include flex;
@@ -86,9 +86,9 @@
     @include p($padding: 8px 12px);
     @include radius($radius: 6px);
     @include f-size($size: 13px);
-    transition: border-color 0.2s, background-color 0.2s;
     @include select-none;
     @include pointer;
+    transition: border-color 0.2s, background-color 0.2s;
 
     &:hover {
       @include bg($color: #2d2d33);
@@ -118,27 +118,6 @@
 
 }
 
-.code-editor {
-  @include dimension($height: 80%, $width: 100%);
-  @include flex-full-center;
-
-  &__editor, &__output {
-    @include dimension($height: 800px !important, $width: 50%);
-
-  }
-
-  &__full-width {
-    @include w($width: 100%);
-
-  }
-
-  &--output-style {
-    @include bg($color: #0f0f11);
-
-  }
-
-}
-
 .options-list {
   @include dimension($height: auto, $width: 160px);
   @include absolute;
@@ -163,12 +142,33 @@
 
     }
 
+    &.option-selected {
+      @include bg($color: #3b82f6 !important);
+
+    }
+
   }
 
 }
 
-.option-selected {
-  @include bg($color: #3b82f6 !important);
+.code-editor {
+  @include dimension($height: 80%, $width: 100%);
+  @include flex-full-center;
+
+  &__editor, &__output {
+    @include dimension($height: 800px !important, $width: 50%);
+
+  }
+
+  &__full-width {
+    @include w($width: 100%);
+
+  }
+
+  &--output-style {
+    @include bg($color: #0f0f11);
+
+  }
 
 }
 
@@ -182,8 +182,8 @@
     @include sticky;
     @include flex;
     @include justify-between;
-    top: 0px;
     @include p($padding: 15px);
+    top: 0px;
     letter-spacing: 1px;
     border-bottom: 1px solid #2d2d34;
 
