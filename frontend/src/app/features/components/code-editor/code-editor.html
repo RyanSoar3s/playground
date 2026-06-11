@@ -33,15 +33,17 @@
           @if (box.isOpen) {
             <ul [class]="'options-list'">
               @for (el of box.list(); track $index) {
-                <li (click)="box.isOpen = !box.isOpen; void selectOption(box.name, (typeof el === 'object') ? el.type : el)">
-                  @if (typeof el === "object") {
-                    {{ el.type }} (v{{ el.version }})
+                <li
+                [class.option-selected]="
+                  el.includes(languageSelected()!) ||
+                  el.includes(runtimeSelected()!) ||
+                  el.includes(themeSelected()!)
 
-                  }
-                  @else {
-                    {{ el }}
+                "
+                (click)="box.isOpen = !box.isOpen; void selectOption(box.name, el)"
 
-                  }
+                >
+                  {{ el }}
 
                 </li>
 
@@ -75,7 +77,8 @@
     [class.code-editor__full-width]="!(XL || LG)"
     [options]="configs()!"
     [autoFormat]="true"
-    [(ngModel)]="code"
+    [ngModel]="code()"
+    (ngModelChange)="code.set($event)"
 
   ></nu-monaco-editor>
   <div
@@ -103,22 +106,8 @@
     </div>
 
 
-    <div [class]="'code-editor__txt'">
-        <p>
-
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus illo quidem nemo, nulla, qui quis corrupti voluptates similique a, explicabo alias esse impedit eaque tempore labore rem! Ullam, maiores voluptatibus? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi placeat saepe in nobis ipsum ad excepturi et fugit, eveniet itaque veniam ab hic autem molestias, iure, illum corrupti corporis debitis! Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas excepturi facere totam tenetur, error illo animi dolores vel nemo officia similique nostrum quam saepe. Illo sit sunt maiores soluta dolorum?
-
-      </p>
+    <div [class]="'code-editor__output-msg'">
+      <p>{{ output() }}</p>
 
     </div>
 

@@ -38,7 +38,7 @@ export class CodeEditor implements OnDestroy {
   private errors = this.languagesServices.errors;
 
   private languagesLabel = signal<LanguageList["languages"][number]["label"] | undefined>(undefined);
-  private languageRuntimes = signal<LanguageList["languages"][number]["runtimes"] | undefined>(undefined);
+  private languageRuntimes = signal<`${Runtime} (v${string})`[] | undefined>(undefined);
   private languageRuntimeSelected = signal<LanguageList["languages"][number]["runtimes"][number]["type"] | undefined>(undefined);
 
   private theme = signal(this.themes()[0]);
@@ -58,14 +58,17 @@ export class CodeEditor implements OnDestroy {
   protected readonly isLoadingCodeExecution = signal(false);
   protected readonly isErrorCodeExecution = signal(false);
 
-  protected code = "";
+  protected code = signal("");
+
+  private outputSignal = signal("");
+  output = computed(() => this.outputSignal());
 
   protected configs = computed<monaco.editor.IStandaloneEditorConstructionOptions | null>(() => {
     const langs = this.languages();
 
     if (langs) {
       return {
-        language: this.languageSelected(),
+        language: (this.languageSelected())?.toLowerCase(),
         theme: this.themeSelected(),
         fontFamily: "Fira Code",
         fontSize: this.fonteSizeSelected(),
@@ -89,7 +92,7 @@ export class CodeEditor implements OnDestroy {
   protected boxSelection: Array<{
     name: string,
     label: Signal<string | undefined>,
-    list: Signal<(string | { type: string, version: string })[] | undefined>
+    list: Signal<string[] | undefined>
     isOpen: boolean,
     interacted: boolean
 
@@ -118,7 +121,6 @@ export class CodeEditor implements OnDestroy {
       isOpen: false,
       interacted: false
 
-
     }
 
   ];
@@ -130,9 +132,12 @@ export class CodeEditor implements OnDestroy {
       const lang = this.languages();
 
       if (lang && !this.languagesLabel()) {
-        this.languagesLabel.set(lang.languages[0].label);
-        this.languageRuntimes.set(lang.languages[0].runtimes);
-        this.languageRuntimeSelected.set(lang.languages[0].runtimes[0].type);
+        const initialLanguage = lang.languages[0];
+        const initialRuntime = initialLanguage.runtimes[0];
+        this.languagesLabel.set(initialLanguage.label);
+        this.languageRuntimes.set([ `${initialRuntime.type} (v${initialRuntime.version})` ]);
+        this.languageRuntimeSelected.set(initialRuntime.type);
+
 
       }
 
@@ -183,7 +188,7 @@ export class CodeEditor implements OnDestroy {
       if (lang.length !== 0) {
         const runtimes = lang[0].runtimes;
 
-        this.languageRuntimes.set(runtimes);
+        this.languageRuntimes.set([ `${runtimes[0].type} (v${runtimes[0].version})` ]);
 
       }
 
@@ -193,7 +198,8 @@ export class CodeEditor implements OnDestroy {
   }
 
   private changeRuntime(runtime: string): void {
-    this.languageRuntimeSelected.set(runtime as Runtime);
+    const [ type, _ ] = runtime.split(" ");
+    this.languageRuntimeSelected.set(type as Runtime);
 
   }
 

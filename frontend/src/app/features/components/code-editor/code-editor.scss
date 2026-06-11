@@ -141,7 +141,6 @@
 }
 
 .options-list {
-
   @include dimension($height: auto, $width: 160px);
   position: absolute;
   background-color: #1f1f23;
@@ -166,6 +165,11 @@
     }
 
   }
+
+}
+
+.option-selected {
+  background-color: #3b82f6 !important;
 
 }
 
@@ -220,7 +224,7 @@
 
 }
 
-.code-editor__txt {
+.code-editor__output-msg {
   padding: 20px 15px;
 
 }
