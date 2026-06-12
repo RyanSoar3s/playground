@@ -11,6 +11,7 @@ import { Responsive } from '../../../core/services/responsive';
 import { LanguageLabels, Languages, Runtime } from '../../../models/language-list.model';
 import { ErrorResult, ExecutionCode, ExecutionStatus } from '../../../models/code-execution.model';
 import { Api } from '../../../core/services/api';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-code-editor',
@@ -194,7 +195,7 @@ export class CodeEditor implements OnDestroy {
   executeCode(): void {
     const code = this.code();
 
-    if (!code) return;
+    if (!code || this.isLoadingCodeExecution()) return;
 
     const payload = {
       code,
@@ -209,7 +210,12 @@ export class CodeEditor implements OnDestroy {
     this.truncatedOutputSignal.set(false);
     this.statusCodeSignal.set(undefined);
 
-    this.api.executeCode(payload).subscribe({
+    this.api.executeCode(payload)
+    .pipe(
+      finalize(() => this.isLoadingCodeExecution.set(false))
+
+    )
+    .subscribe({
       next: (output) => {
         const stdout = output.stdout.text;
         const stderr = output.stderr;
@@ -226,8 +232,7 @@ export class CodeEditor implements OnDestroy {
       error: (err: ErrorResult) => {
         console.error(err)
 
-      },
-      complete: () => this.isLoadingCodeExecution.set(false)
+      }
 
     });
 
