@@ -84,10 +84,8 @@
 
   <button
     [class]="'options__btn-run'"
-    [style]="{
-      'width': !(XL || LG) ? '100%' : 'auto'
-
-    }"
+    [style.width]="!(XL || LG) ? '100%' : 'auto'"
+    (click)="void executeCode()"
 
   >
     <fa-icon [icon]="faCaretRight"></fa-icon>
@@ -99,10 +97,7 @@
 
 <section
   [class]="'code-editor'"
-  [style]="{
-    'flex-direction': (XL || LG) ? 'row' : 'column'
-
-  }"
+  [style.flex-direction]="(XL || LG) ? 'row' : 'column'"
 
   >
   <nu-monaco-editor
@@ -129,8 +124,8 @@
 
         }
 
-        @else {
-          <p>1.5ms <fa-icon [icon]="faCircleCheck" [style]="'color: #65e6bfff'"></fa-icon></p>
+        @else if (durationMs()) {
+          <p>{{ durationMs() }} <fa-icon [icon]="faCircleCheck" [style]="'color: #65e6bfff'"></fa-icon></p>
 
         }
 
@@ -140,8 +135,10 @@
 
 
     <div [class]="'code-editor__output-msg'">
-      <p>{{ output() }}</p>
+      @for (out of output(); track $index) {
+          <p>{{ out }}</p>
 
+        }
     </div>
 
   </div>

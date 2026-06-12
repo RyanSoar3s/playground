@@ -8,7 +8,9 @@ import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { SpinLoader } from '../../shared/spin-loader/spin-loader';
 import { Responsive } from '../../../core/services/responsive';
-import { LanguageLabels, LanguageList, Runtime } from '../../../models/language-list.model';
+import { LanguageLabels, Languages, Runtime } from '../../../models/language-list.model';
+import { ErrorResult, ExecutionCode } from '../../../models/code-execution.model';
+import { Api } from '../../../core/services/api';
 
 @Component({
   selector: 'app-code-editor',
@@ -31,15 +33,16 @@ import { LanguageLabels, LanguageList, Runtime } from '../../../models/language-
 export class CodeEditor implements OnDestroy {
   protected responsive = inject(Responsive);
   private languagesServices = inject(GetLanguages);
+  private api = inject(Api);
 
   protected readonly themes = signal([ "vs-dark", "vs-light", "hc-black", "hc-light" ]);
 
   private languages = this.languagesServices.languages;
   private errors = this.languagesServices.errors;
 
-  private languagesLabel = signal<LanguageList["languages"][number]["label"] | undefined>(undefined);
+  private languagesLabel = signal<LanguageLabels | undefined>(undefined);
   private languageRuntimes = signal<`${Runtime} (v${string})`[] | undefined>(undefined);
-  private languageRuntimeSelected = signal<LanguageList["languages"][number]["runtimes"][number]["type"] | undefined>(undefined);
+  private languageRuntimeSelected = signal<Runtime | undefined>(undefined);
 
   private theme = signal(this.themes()[0]);
   fontSize = signal(16);
@@ -59,7 +62,11 @@ export class CodeEditor implements OnDestroy {
 
   protected code = signal("");
 
-  private outputSignal = signal("");
+  private durationMsSignal = signal<string | undefined>(undefined);
+  protected durationMs = computed(() => this.durationMsSignal());
+
+  private outputSignal = signal<string[]>([]);
+
   output = computed(() => this.outputSignal());
 
   protected configs = computed<monaco.editor.IStandaloneEditorConstructionOptions | null>(() => {
@@ -112,7 +119,6 @@ export class CodeEditor implements OnDestroy {
       isOpen: false,
       interacted: false
 
-
     },
     {
       name: "tema",
@@ -134,10 +140,10 @@ export class CodeEditor implements OnDestroy {
       if (lang && !this.languagesLabel()) {
         const initialLanguage = lang.languages[0];
         const initialRuntime = initialLanguage.runtimes[0];
+
         this.languagesLabel.set(initialLanguage.label);
         this.languageRuntimes.set([ `${initialRuntime.type} (v${initialRuntime.version})` ]);
         this.languageRuntimeSelected.set(initialRuntime.type);
-
 
       }
 
@@ -174,6 +180,41 @@ export class CodeEditor implements OnDestroy {
         break;
 
     }
+
+  }
+
+  executeCode(): void {
+    const code = this.code();
+
+    if (!code) return;
+
+    const payload = {
+      code,
+      language: (this.languageSelected())?.toLocaleLowerCase() as Languages,
+      runtime: this.runtimeSelected() as Runtime,
+      stdin: ""
+
+    } satisfies ExecutionCode;
+
+    this.isLoadingCodeExecution.set(true);
+
+    this.api.executeCode(payload).subscribe({
+      next: (output) => {
+        const stdout = output.stdout.text;
+        const stderr = output.stderr;
+
+        this.outputSignal.set(((stdout) ? stdout : stderr).split("\n").slice(0, -1));
+
+        this.durationMsSignal.set(`${output.durationMs}ms`);
+
+      },
+      error: (err: ErrorResult) => {
+        console.error(err)
+
+      },
+      complete: () => this.isLoadingCodeExecution.set(false)
+
+    });
 
   }
 
