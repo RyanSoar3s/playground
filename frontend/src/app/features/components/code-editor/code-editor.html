@@ -85,7 +85,7 @@
   <button
     [class]="'options__btn-run options__btn-run--bg'"
     [style.width]="!(XL || LG) ? '100%' : 'auto'"
-    [disabled]="isLoadingCodeExecution()"
+    [disabled]="isLoadingCodeExecution() || !code()"
     (click)="void executeCode()"
 
   >
@@ -136,10 +136,56 @@
 
 
     <div [class]="'code-editor__output-msg'">
-      @for (out of output(); track $index) {
-          <p>{{ out }}</p>
+      @if (output().length === 0 && !isLoadingCodeExecution()) {
+        <div [class]="'code__editor__output-content code-editor__output-empty'">
+          Console limpo. Clique em "Executar Código" acima.
+
+        </div>
+
+      }
+      @else {
+        @let status = statusCode();
+        <div>
+          <div [class]="'code-editor__output-meta-before'">
+            <fa-icon [icon]="faTerminal"></fa-icon>
+            <p>
+              [<span [style.text-transform]="'capitalize'">{{ runtimeSelected() }}</span>]
+              Ambiente de execução <span>{{ languageSelected() }} inicializado</span>
+
+            </p>
+
+          </div>
+          <div [class]="'code-editor__output-content success'" [class.error]="(status?.status === 'error')">
+            @for (out of output(); track $index) {
+              <p>{{ out }}</p>
+
+            }
+
+          </div>
+
+        </div>
+        @if (truncatedOutput()) {
+          <div [class]="'warning'">
+            <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+            <span><span [style.text-transform]="'uppercase'">[trucanted]</span> output exceeded character limit</span>
+
+          </div>
 
         }
+
+        <div [class]="'code-editor__output-meta-after'">
+          status code:
+          @if (!status) { - }
+          @else {
+            <span [class]="'success'" [class.error]="(status.status === 'error')">{{ status.code }} </span>
+            <span [class]="'success'" [class.error]="(status.status === 'error')">({{ status.status }})</span>
+
+          }
+
+        </div>
+
+      }
+
     </div>
 
   </div>

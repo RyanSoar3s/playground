@@ -5,11 +5,11 @@ import { GetLanguages } from '../../../core/services/get-languages';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
-import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCaretRight, faTerminal, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { SpinLoader } from '../../shared/spin-loader/spin-loader';
 import { Responsive } from '../../../core/services/responsive';
 import { LanguageLabels, Languages, Runtime } from '../../../models/language-list.model';
-import { ErrorResult, ExecutionCode } from '../../../models/code-execution.model';
+import { ErrorResult, ExecutionCode, ExecutionStatus } from '../../../models/code-execution.model';
 import { Api } from '../../../core/services/api';
 
 @Component({
@@ -65,7 +65,13 @@ export class CodeEditor implements OnDestroy {
   private durationMsSignal = signal<string | undefined>(undefined);
   protected durationMs = computed(() => this.durationMsSignal());
 
+  private statusCodeSignal = signal<{ status: ExecutionStatus, code: number | null } | undefined>(undefined);
+  protected statusCode = computed(() => this.statusCodeSignal());
+
   private outputSignal = signal<string[]>([]);
+
+  private truncatedOutputSignal = signal(false);
+  protected truncatedOutput = computed(() => this.truncatedOutputSignal());
 
   output = computed(() => this.outputSignal());
 
@@ -95,6 +101,8 @@ export class CodeEditor implements OnDestroy {
   protected readonly faCircleCheck = faCircleCheck;
   protected readonly faCaretDown = faCaretDown;
   protected readonly faCaretRight = faCaretRight;
+  protected readonly faTerminal = faTerminal;
+  protected readonly faTriangleExclamation = faTriangleExclamation;
 
   protected boxSelection: Array<{
     name: string,
@@ -197,15 +205,24 @@ export class CodeEditor implements OnDestroy {
     } satisfies ExecutionCode;
 
     this.isLoadingCodeExecution.set(true);
+    this.outputSignal.set([]);
+    this.truncatedOutputSignal.set(false);
+    this.statusCodeSignal.set(undefined);
 
     this.api.executeCode(payload).subscribe({
       next: (output) => {
         const stdout = output.stdout.text;
         const stderr = output.stderr;
 
-        this.outputSignal.set(((stdout) ? stdout : stderr).split("\n").slice(0, -1));
+        const outputMsg = stdout + stderr;
+
+        console.log(outputMsg)
+
+        this.outputSignal.set(((outputMsg) ? outputMsg: "EMPTY\n").split("\n").slice(0, -1));
 
         this.durationMsSignal.set(`${output.durationMs}ms`);
+        this.statusCodeSignal.set({ status: output.status, code: output.exitCode });
+        this.truncatedOutputSignal.set(output.stdout.truncated);
 
       },
       error: (err: ErrorResult) => {

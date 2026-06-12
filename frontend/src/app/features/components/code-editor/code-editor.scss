@@ -244,10 +244,12 @@
     @include sticky;
     @include flex;
     @include justify-between;
+    @include h($height: 63px);
     @include p($padding: 15px);
     top: 0px;
     letter-spacing: 1px;
     border-bottom: 1px solid #2d2d34;
+    @include z($index: 999);
 
     & h5 {
       @include f-weight($weight: 700);
@@ -286,6 +288,75 @@
 }
 
 .code-editor__output-msg {
-  @include p($padding: 20px 15px);
+  @include relative;
+  @include flex;
+  @include flex-col;
+  @include justify-between;
+  @include h($height: calc(100% - 60px));
+  @include p($padding: 20px 20px 0px 15px);
+
+  & .code__editor__output-content {
+    @include c($color: #34d399);
+    white-space: pre-wrap;
+    word-break: break-all;
+
+  }
+
+  & .code-editor__output-empty {
+    @include c($color: #71717a);
+    font-style: italic;
+
+  }
+
+}
+
+.code-editor__output-meta-before {
+  @include c($color: #60a5fa);
+  @include flex;
+  @include align-center;
+  @include gap($gap: 6px);
+  @include f-size($size: 0.9em);
+  @include f-weight($weight: 600);
+  border-bottom: 1px solid #ffffff0d;
+  padding-bottom: 10px;
+
+}
+
+.code-editor__output-content {
+  @include p($padding: 5px 0px);
+
+}
+
+.code-editor__output-meta-after {
+  @include bg($color: #0f0f11);
+  @include c($color: #71717a);
+  @include w($width: 100%);
+  @include f-size($size: 0.78em);
+  @include f-weight($weight: 600);
+  @include p($padding: 10px);
+  border-top: 1px solid #ffffff0d;
+
+}
+
+.warning {
+  @include bg($color: #f59e0b14);
+  @include c($color: #fcd34d);
+  @include flex;
+  @include align-center;
+  @include gap($gap: 8px);
+  @include border(1px, dashed, #f59e0b);
+  @include p($padding: 12px);
+  @include radius($radius: 6px);
+  @include f-size($size: 0.78em);
+
+}
+
+.success {
+  @include c($color: #10b981);
+
+}
+
+.error {
+  @include c($color: #ef4444);
 
 }
