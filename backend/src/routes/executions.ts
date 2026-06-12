@@ -8,6 +8,7 @@ import HttpError from "@errors/http-error";
 
 const jsonHeaders = {
   "Access-Control-Allow-Origin": Origin || "http://localhost:4200",
+  "Access-Control-Allow-Credentials": "true",
   "Content-Type": "application/json"
 
 };
