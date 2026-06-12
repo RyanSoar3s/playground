@@ -180,7 +180,6 @@
 }
 
 .options__btn-run {
-  @include bg(#10b981);
   @include c-white;
   @include flex-full-center;
   @include h($height: 40px);
@@ -195,6 +194,20 @@
 
   &:hover {
     @include bg(#059669);
+
+  }
+
+}
+
+.options__btn-run--bg {
+  &, &:disabled:hover {
+    @include bg(#10b981);
+
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: default;
 
   }
 

@@ -83,8 +83,9 @@
   </div>
 
   <button
-    [class]="'options__btn-run'"
+    [class]="'options__btn-run options__btn-run--bg'"
     [style.width]="!(XL || LG) ? '100%' : 'auto'"
+    [disabled]="isLoadingCodeExecution()"
     (click)="void executeCode()"
 
   >
