@@ -216,8 +216,6 @@ export class CodeEditor implements OnDestroy {
 
         const outputMsg = stdout + stderr;
 
-        console.log(outputMsg)
-
         this.outputSignal.set(((outputMsg) ? outputMsg: "EMPTY\n").split("\n").slice(0, -1));
 
         this.durationMsSignal.set(`${output.durationMs}ms`);
