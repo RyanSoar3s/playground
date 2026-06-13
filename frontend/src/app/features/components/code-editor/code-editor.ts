@@ -12,6 +12,8 @@ import { LanguageLabels, Languages, Runtime } from '../../../models/language-lis
 import { ErrorResult, ExecutionCode, ExecutionStatus } from '../../../models/code-execution.model';
 import { Api } from '../../../core/services/api';
 import { finalize } from 'rxjs';
+import { Health } from '../../../core/services/health';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-code-editor',
@@ -26,7 +28,8 @@ import { finalize } from 'rxjs';
   templateUrl: './code-editor.html',
   styleUrl: './code-editor.scss',
   host: {
-    '(click)': 'void closeMenu($event)'
+    '(click)': 'void closeMenu($event)',
+    '[style.overflow]': `(isErrorLanguageData() || checkHealth() && checkHealth()?.status === "error") ? 'hidden' : ''`
 
   }
 
@@ -35,8 +38,12 @@ export class CodeEditor implements OnDestroy {
   protected responsive = inject(Responsive);
   private languagesServices = inject(GetLanguages);
   private api = inject(Api);
+  private health = inject(Health);
+  private router = inject(Router);
 
   protected readonly themes = signal([ "vs-dark", "vs-light", "hc-black", "hc-light" ]);
+
+  checkHealth = this.health.checkHealth;
 
   private languages = this.languagesServices.languages;
   private errors = this.languagesServices.errors;
@@ -140,23 +147,33 @@ export class CodeEditor implements OnDestroy {
 
   ];
 
-  private effectRef!: EffectRef;
+  private effectRefs!: EffectRef[];
 
   constructor() {
-    this.effectRef = effect(() => {
-      const lang = this.languages();
+    this.effectRefs = [
+      effect(() => {
+        if ((this.checkHealth() && this.checkHealth()?.status === "error") || this.isErrorLanguageData()) {
+          this.router.navigate([ "/error" ]);
 
-      if (lang && !this.languagesLabel()) {
-        const initialLanguage = lang.languages[0];
-        const initialRuntime = initialLanguage.runtimes[0];
+        }
 
-        this.languagesLabel.set(initialLanguage.label);
-        this.languageRuntimes.set([ `${initialRuntime.type} (v${initialRuntime.version})` ]);
-        this.languageRuntimeSelected.set(initialRuntime.type);
+      }),
+      effect(() => {
+        const lang = this.languages();
 
-      }
+        if (lang && !this.languagesLabel()) {
+          const initialLanguage = lang.languages[0];
+          const initialRuntime = initialLanguage.runtimes[0];
 
-    })
+          this.languagesLabel.set(initialLanguage.label);
+          this.languageRuntimes.set([ `${initialRuntime.type} (v${initialRuntime.version})` ]);
+          this.languageRuntimeSelected.set(initialRuntime.type);
+
+        }
+
+      })
+
+    ]
 
   }
 
@@ -292,7 +309,7 @@ export class CodeEditor implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.effectRef) this.effectRef.destroy();
+    if (this.effectRefs) this.effectRefs.forEach((ref) => ref.destroy());
 
   }
 

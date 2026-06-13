@@ -1,7 +1,9 @@
 @let XL = responsive.isXl();
 @let LG = responsive.isLg();
 
-@if (isLoadingLanguageData()) {
+@let health = checkHealth();
+
+@if (health === undefined || health.status === "ok" && isLoadingLanguageData()) {
   <div [class]="'loading-data'">
     <app-spin-loader [height]="'130px'" [width]="'130px'" [borderWidth]="'8px'"></app-spin-loader>
 

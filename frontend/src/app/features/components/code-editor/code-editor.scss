@@ -130,7 +130,7 @@
 
 .open-menu {
   @include border(null, null, #3b82f6 !important);
-  @include shadow($value: 0px 0px 0px 2px #3b82f633);
+  @include shadow((0px 0px 0px 2px #3b82f633, ));
 
 }
 
@@ -152,7 +152,7 @@
   @include bg($color: #1f1f23);
   @include border(1px, solid, #3f3f46);
   @include radius($radius: 6px);
-  @include shadow($value: 0px 10px 15px -3px #00000080);
+  @include shadow((0px 10px 15px -3px #00000080));
   @include max-h($height: 250px);
   @include overflow($axis: y, $value: auto);
   @include pointer;
@@ -189,7 +189,7 @@
   @include f-size($size: 14px);
   @include f-weight($weight: 600);
   @include pointer;
-  @include shadow($value: 0px 2px 4px #10b98133);
+  @include shadow((0px 2px 4px #10b98133));
   transition: background-color 0.2s, transform 0.1s;
 
   &:hover {
