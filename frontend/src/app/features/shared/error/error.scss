@@ -1,0 +1,102 @@
+@use "../../../styles/util.scss" as *;
+@use 'sass:list';
+
+$bgCard: #131316;
+$borderColor: #2a2a32;
+$accentRed: #ef4444;
+$accentRedHover: #dc2626;
+
+$colorIcon: #ef444433;
+$bgIcon: #ef444414;
+
+$colorP: #71717a;
+
+$bgDetails: #0b0b0e;
+$colorDetails: #fca5a5;
+
+:host {
+  @include fixed;
+  @include bg($color: black);
+  @include flex-full-center;
+  @include dimension($height: 100vh, $width: 100vw);
+  @include p($padding: 0px 20px);
+  top: 0;
+  opacity: 1;
+  @include overflow(null, hidden);
+  @include z($index: 9999);
+
+}
+
+.error-card {
+  @include bg($color: $bgCard);
+  @include flex-full-center;
+  @include flex-col;
+  @include gap($gap: 20px);
+  @include border(1px, solid, $borderColor);
+  border-top: 4px solid $accentRed;
+  @include radius($radius: 12px);
+  @include w($width: 100%);
+  @include max-w($width: 480px);
+  @include p($padding: 32px);
+  @include shadow((20px 40px #000000b3, 0px 0px 50px #ef44440d));
+  text-align: center;
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+}
+
+.error-card__icon {
+  @include dimension($height: 56px, $width: 56px);
+  @include flex-full-center;
+  @include bg($color: $bgIcon);
+  @include c($color: $accentRed);
+  @include radius($radius: 50%);
+  @include f-size($size: 1.4em);
+  @include border(1px, solid, $colorIcon);
+  filter: drop-shadow(0 0 12px $colorIcon);
+
+}
+
+p {
+  @include f-size($size: 0.9em);
+  @include c($color: $colorP);
+  line-height: 1.5;
+
+}
+
+.error-card__details {
+  @include bg($color: $bgDetails);
+  @include c($color: $colorDetails);
+  @include border(1px, solid, $borderColor);
+  @include radius($radius: 6px);
+  @include p($padding: 10px 14px);
+  @include f-size($size: 12px);
+  font-family: monospace;
+  text-align: left;
+  word-break: break-all;
+  max-height: 100px;
+  @include overflow(y, auto);
+
+}
+
+button {
+  @include bg($color: $accentRed);
+  @include c-white;
+  @include flex;
+  @include align-center;
+  @include gap($gap: 8px);
+  @include h($height: 38px);
+  @include border(0px, none, none);
+  @include p($padding: 0px 20px);
+  @include radius($radius: 6px);
+  @include f-size($size: 13px);
+  @include f-weight($weight: 600);
+  @include pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    @include bg($color: #dc2626);
+
+  }
+
+}

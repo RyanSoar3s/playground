@@ -1,0 +1,23 @@
+<section [class]="'error-card'">
+  <div [class]="'error-card__icon'">
+    <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+
+  </div>
+  <h2 [style.font-size]="'1.15em'" [style.font-weight]="'600'">Falha na inicialização</h2>
+  <p>
+    Não foi possível estabelecer conexão com o ecossistema do Playground.
+    Isso geralmente ocorre devido a bloqueios de rede ou indisponibilidade dos servidores de CDN.
+
+  </p>
+  <div [class]="'error-card__details'">
+    ERROR_SERVER: Falha na comunicação com o servidor.
+
+  </div>
+
+  <button (click)="void navigateToHomePage()">
+    <fa-icon [icon]="faArrowRotateRight"></fa-icon>
+    <span [style.text-transform]="'capitalize'">tentar novamente</span>
+
+  </button>
+
+</section>
