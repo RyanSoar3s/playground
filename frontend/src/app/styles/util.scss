@@ -21,6 +21,11 @@
 
 }
 
+@mixin max-w($width) {
+  max-width: $width;
+
+}
+
 @mixin min-w($width) {
   min-width: $width;
 
@@ -99,6 +104,11 @@
 
 }
 
+@mixin fixed {
+  position: fixed;
+
+}
+
 @mixin z($index) {
   z-index: $index;
 
@@ -147,7 +157,7 @@
 
 }
 
-@mixin shadow($value) {
+@mixin shadow($value...) {
   box-shadow: $value;
 
 }
