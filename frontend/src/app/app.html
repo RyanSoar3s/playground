@@ -1,1 +1,8 @@
-<router-outlet></router-outlet>
+@if (isAppLoading()) {
+  <app-loading-skeleton></app-loading-skeleton>
+
+}
+@else {
+  <router-outlet></router-outlet>
+
+}
