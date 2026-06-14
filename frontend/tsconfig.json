@@ -19,7 +19,8 @@
       "@features/*": [ "./src/app/features/*" ],
       "@models/*": [ "./src/app/models/*" ],
       "@styles/*": [ "./src/app/styles/*" ],
-      "@environments/*": [ "./src/environments/*" ]
+      "@environments/*": [ "./src/environments/*" ],
+      "@mocks/*": [ "./src/app/mocks/*" ]
     }
   },
   "angularCompilerOptions": {
