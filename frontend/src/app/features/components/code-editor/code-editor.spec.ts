@@ -421,6 +421,34 @@ describe('CodeEditor', () => {
     });
   });
 
+  describe('error navigation', () => {
+    it('should navigate to /error when health check returns error', () => {
+      healthMock.seedError('service unavailable');
+      createComponent();
+      detectChanges();
+
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/error']);
+    });
+
+    it('should navigate to /error when language data has errors', () => {
+      healthMock.seedOk();
+      getLanguagesMock.seedErrors('failed to fetch');
+      createComponent();
+      detectChanges();
+
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/error']);
+    });
+
+    it('should not navigate to /error when health is ok and no language errors', () => {
+      healthMock.seedOk();
+      getLanguagesMock.seedLanguages();
+      createComponent();
+      detectChanges();
+
+      expect(routerMock.navigate).not.toHaveBeenCalledWith(['/error']);
+    });
+  });
+
   describe('ngOnDestroy', () => {
     it('should destroy all effect refs on destroy', () => {
       createComponent();
