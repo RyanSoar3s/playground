@@ -1,16 +1,6 @@
 @let XL = responsive.isXl();
 @let LG = responsive.isLg();
 
-@let health = checkHealth();
-
-@if (health === undefined || health.status === "ok" && isLoadingLanguageData()) {
-  <div [class]="'loading-data'">
-    <app-spin-loader [height]="'130px'" [width]="'130px'" [borderWidth]="'8px'"></app-spin-loader>
-
-  </div>
-
-}
-
 <section [class]="'options'">
   <div [class]="'options__box-selections'">
     @for (box of boxSelection; track $index) {
@@ -22,7 +12,6 @@
           <div
             [class.rotate-up]="box.interacted && box.isOpen"
             [class.rotate-down]="box.interacted && !box.isOpen"
-
           >
             <fa-icon [icon]="faCaretDown"></fa-icon>
 
@@ -39,10 +28,8 @@
                     el.includes(languageSelected()!) ||
                     el.includes(runtimeSelected()!) ||
                     el.includes(themeSelected()!)
-
                   "
                   (click)="box.isOpen = !box.isOpen; void selectOption(box.name, el)"
-
                 >
                   {{ el }}
 
@@ -57,7 +44,6 @@
         </div>
 
       </div>
-
     }
 
     <div [class]="'options__box-wrapper'">
@@ -102,7 +88,7 @@
   [class]="'code-editor'"
   [style.flex-direction]="(XL || LG) ? 'row' : 'column'"
 
-  >
+>
   <nu-monaco-editor
     [class]="'code-editor__editor'"
     [class.code-editor__full-width]="!(XL || LG)"
@@ -126,7 +112,6 @@
           <app-spin-loader [height]="'18px'" [width]="'18px'"></app-spin-loader>
 
         }
-
         @else if (durationMs()) {
           <p>{{ durationMs() }} <fa-icon [icon]="faCircleCheck" [style]="'color: #65e6bfff'"></fa-icon></p>
 
@@ -135,7 +120,6 @@
       </div>
 
     </div>
-
 
     <div [class]="'code-editor__output-msg'">
       @if (output().length === 0 && !isLoadingCodeExecution()) {
@@ -150,6 +134,7 @@
         <div>
           <div [class]="'code-editor__output-meta-before'">
             <fa-icon [icon]="faTerminal"></fa-icon>
+
             <p>
               [<span [style.text-transform]="'capitalize'">{{ runtimeSelected() }}</span>]
               Ambiente de execução <span>{{ languageSelected() }} inicializado</span>
@@ -157,6 +142,7 @@
             </p>
 
           </div>
+
           <div [class]="'code-editor__output-content success'" [class.error]="(status?.status === 'error')">
             @for (out of output(); track $index) {
               <p>{{ out }}</p>
@@ -166,6 +152,7 @@
           </div>
 
         </div>
+
         @if (truncatedOutput()) {
           <div [class]="'warning'">
             <fa-icon [icon]="faTriangleExclamation"></fa-icon>

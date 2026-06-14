@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, computed, Signal, effect, OnDestroy, EffectRef } from '@angular/core';
-import { NuMonacoEditorComponent } from "@ng-util/monaco-editor"
-import { GetLanguages } from '../../../core/services/get-languages';
+import { NuMonacoEditorComponent } from "@ng-util/monaco-editor";
+import { GetLanguages } from '@core/services/get-languages';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import { faCaretDown, faCaretRight, faTerminal, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { SpinLoader } from '../../shared/spin-loader/spin-loader';
-import { Responsive } from '../../../core/services/responsive';
-import { LanguageLabels, Languages, Runtime } from '../../../models/language-list.model';
-import { ErrorResult, ExecutionCode, ExecutionStatus } from '../../../models/code-execution.model';
-import { Api } from '../../../core/services/api';
+import { SpinLoader } from '@features/shared/spin-loader/spin-loader';
+import { Responsive } from '@core/services/responsive';
+import { LanguageLabels, Languages, Runtime } from '@models/language-list.model';
+import { ErrorResult, ExecutionCode, ExecutionStatus } from '@models/code-execution.model';
+import { Api } from '@core/services/api';
 import { finalize } from 'rxjs';
-import { Health } from '../../../core/services/health';
+import { Health } from '@core/services/health';
 import { Router } from '@angular/router';
 
 @Component({
@@ -23,13 +23,11 @@ import { Router } from '@angular/router';
     NuMonacoEditorComponent,
     FontAwesomeModule,
     SpinLoader
-
   ],
   templateUrl: './code-editor.html',
   styleUrl: './code-editor.scss',
   host: {
     '(click)': 'void closeMenu($event)',
-    '[style.overflow]': `(isErrorLanguageData() || checkHealth() && checkHealth()?.status === "error") ? 'hidden' : ''`
 
   }
 
@@ -62,7 +60,6 @@ export class CodeEditor implements OnDestroy {
   protected languageList = computed(() => this.languages()?.languages.map((data) => data.label));
   protected runtimeList = computed(() => this.languageRuntimes());
 
-  protected readonly isLoadingLanguageData = computed(() => (this.languages()) ? false : true);
   protected readonly isErrorLanguageData = computed(() => (this.errors()) ? true : false);
 
   protected readonly isLoadingCodeExecution = signal(false);
@@ -115,7 +112,7 @@ export class CodeEditor implements OnDestroy {
   protected boxSelection: Array<{
     name: string,
     label: Signal<string | undefined>,
-    list: Signal<string[] | undefined>
+    list: Signal<string[] | undefined>,
     isOpen: boolean,
     interacted: boolean
 
@@ -173,7 +170,7 @@ export class CodeEditor implements OnDestroy {
 
       })
 
-    ]
+    ];
 
   }
 
@@ -187,7 +184,7 @@ export class CodeEditor implements OnDestroy {
       }
       else el.isOpen = false;
 
-    })
+    });
 
   }
 
@@ -239,15 +236,14 @@ export class CodeEditor implements OnDestroy {
 
         const outputMsg = stdout + stderr;
 
-        this.outputSignal.set(((outputMsg) ? outputMsg: "EMPTY\n").split("\n").slice(0, -1));
+        this.outputSignal.set(((outputMsg) ? outputMsg : "EMPTY\n").split("\n").slice(0, -1));
 
         this.durationMsSignal.set(`${output.durationMs}ms`);
         this.statusCodeSignal.set({ status: output.status, code: output.exitCode });
         this.truncatedOutputSignal.set(output.stdout.truncated);
-
       },
       error: (err: ErrorResult) => {
-        console.error(err)
+        console.error(err);
 
       }
 
@@ -271,7 +267,6 @@ export class CodeEditor implements OnDestroy {
       }
 
     }
-
 
   }
 
@@ -297,9 +292,7 @@ export class CodeEditor implements OnDestroy {
       if (
         box.isOpen &&
         containerWrapper?.getAttribute("box-name") !== box.name
-
       ) {
-
         box.isOpen = false;
 
       }
