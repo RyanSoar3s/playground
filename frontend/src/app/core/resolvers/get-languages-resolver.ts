@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { Api } from '../services/api';
+import { Api } from '@core/services/api';
 import { map, take, tap, catchError, of } from 'rxjs';
-import { GetLanguages } from '../services/get-languages';
+import { GetLanguages } from '@core/services/get-languages';
 
 export const getLanguagesResolver: ResolveFn<void> = () => {
   const api = inject(Api);
@@ -19,10 +19,10 @@ export const getLanguagesResolver: ResolveFn<void> = () => {
 
       languagesServices.setErrors(error);
 
-      return of(undefined)
+      return of(undefined);
 
     })
 
   );
-
+  
 };

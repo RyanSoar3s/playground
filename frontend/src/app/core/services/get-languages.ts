@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { LanguageList } from '../../models/language-list.model';
+import { LanguageList } from '@models/language-list.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LanguageList } from '../../models/language-list.model';
-import { environment } from '../../../environments/environment';
-import { ExecutionCode, ExecutionResult } from '../../models/code-execution.model';
+import { LanguageList } from '@models/language-list.model';
+import { environment } from '@environments/environment';
+import { ExecutionCode, ExecutionResult } from '@models/code-execution.model';
 
 @Injectable({
   providedIn: 'root',

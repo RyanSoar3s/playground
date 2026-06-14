@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { take, tap, map, catchError, of } from 'rxjs';
-import { Api } from '../services/api';
-import { Health } from '../services/health';
+import { Api } from '@core/services/api';
+import { Health } from '@core/services/health';
 
 export const healthGuard: CanActivateFn = () => {
   const api = inject(Api);
