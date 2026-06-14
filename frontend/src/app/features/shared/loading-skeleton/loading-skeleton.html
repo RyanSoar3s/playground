@@ -1,0 +1,39 @@
+<section [class]="'skeleton'">
+  <div [class]="'skeleton__header'">
+    <div [class]="'skeleton__pill-group'">
+      <div [class]="'skeleton__pill skeleton__pill--wide'"></div>
+      <div [class]="'skeleton__pill'"></div>
+      <div [class]="'skeleton__pill'"></div>
+      <div [class]="'skeleton__pill skeleton__pill--small'"></div>
+
+    </div>
+    <div [class]="'skeleton__pill skeleton__pill--btn'"></div>
+
+  </div>
+
+  <div [class]="'skeleton__body'">
+    <div [class]="'skeleton__panel'">
+      <div [class]="'skeleton__line'"></div>
+      <div [class]="'skeleton__line'"></div>
+      <div [class]="'skeleton__line skeleton__line--short'"></div>
+      <div [class]="'skeleton__line'"></div>
+      <div [class]="'skeleton__line skeleton__line--medium'"></div>
+
+    </div>
+
+    <div [class]="'skeleton__panel skeleton__panel--output'">
+      <div [class]="'skeleton__line'"></div>
+      <div [class]="'skeleton__line skeleton__line--short'"></div>
+      <div [class]="'skeleton__line'"></div>
+
+    </div>
+
+  </div>
+
+  <div [class]="'skeleton__indicator'">
+    <app-spin-loader [height]="'40px'" [width]="'40px'" [borderWidth]="'4px'"></app-spin-loader>
+    <p [class]="'skeleton__indicator-text'">Carregando Playground...</p>
+
+  </div>
+  
+</section>
