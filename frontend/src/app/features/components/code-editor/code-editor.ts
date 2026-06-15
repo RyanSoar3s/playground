@@ -90,6 +90,7 @@ export class CodeEditor implements OnDestroy {
         fontFamily: "Fira Code",
         fontSize: this.fontSize(),
         fontLigatures: true,
+        tabSize: 2,
         automaticLayout: true,
         folding: true,
         overviewRulerLanes: 0,
