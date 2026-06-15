@@ -62,8 +62,11 @@ export class CodeEditor implements OnDestroy {
 
   protected readonly isErrorLanguageData = computed(() => (this.errors()) ? true : false);
 
-  protected readonly isLoadingCodeExecution = signal(false);
-  protected readonly isErrorCodeExecution = signal(false);
+  private isLoadingCodeExecutionSignal = signal(false);
+  private errorExecutionSignal = signal<ErrorResult | undefined>(undefined);
+
+  protected readonly isLoadingCodeExecution = computed(() => this.isLoadingCodeExecutionSignal());
+  protected readonly errorExecution = computed(() => this.errorExecutionSignal());
 
   protected code = signal("");
 
@@ -210,7 +213,7 @@ export class CodeEditor implements OnDestroy {
   executeCode(): void {
     const code = this.code();
 
-    if (!code || this.isLoadingCodeExecution()) return;
+    if (!code || this.isLoadingCodeExecutionSignal()) return;
 
     const payload = {
       code,
@@ -220,14 +223,15 @@ export class CodeEditor implements OnDestroy {
 
     } satisfies ExecutionCode;
 
-    this.isLoadingCodeExecution.set(true);
+    this.isLoadingCodeExecutionSignal.set(true);
+    this.errorExecutionSignal.set(undefined);
     this.outputSignal.set([]);
     this.truncatedOutputSignal.set(false);
     this.statusCodeSignal.set(undefined);
 
     this.api.executeCode(payload)
     .pipe(
-      finalize(() => this.isLoadingCodeExecution.set(false))
+      finalize(() => this.isLoadingCodeExecutionSignal.set(false))
 
     )
     .subscribe({
@@ -243,7 +247,15 @@ export class CodeEditor implements OnDestroy {
         this.statusCodeSignal.set({ status: output.status, code: output.exitCode });
         this.truncatedOutputSignal.set(output.stdout.truncated);
       },
-      error: (err: ErrorResult) => {
+      error: (err) => {
+        const errorResult = err.error as ErrorResult;
+        this.errorExecutionSignal.set(errorResult);
+
+        this.statusCodeSignal.set({
+          code: err.status ?? 500,
+          status: "error"
+
+        });
         console.error(err);
 
       }

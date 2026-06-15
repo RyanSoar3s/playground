@@ -122,15 +122,19 @@
     </div>
 
     <div [class]="'code-editor__output-msg'">
+      @let status = statusCode();
+      @let errorExecutionResult = errorExecution();
+
       @if (output().length === 0 && !isLoadingCodeExecution()) {
-        <div [class]="'code__editor__output-content code-editor__output-empty'">
+        <div [class]="'code-editor__output-content code-editor__output-empty'">
           Console limpo. Clique em "Executar Código" acima.
 
         </div>
 
+
       }
+
       @else {
-        @let status = statusCode();
         <div>
           <div [class]="'code-editor__output-meta-before'">
             <fa-icon [icon]="faTerminal"></fa-icon>
@@ -143,14 +147,60 @@
 
           </div>
 
-          <div [class]="'code-editor__output-content success'" [class.error]="(status?.status === 'error')">
-            @for (out of output(); track $index) {
-              <p>{{ out }}</p>
+          @if (errorExecutionResult) {
+            <div [class]="'code-editor__error-server'">
+              <div [class]="'code-editor__error-server-title'">
+                <div [class]="'code-editor__error-server-icon'">
+                  <fa-icon [icon]="faTriangleExclamation"></fa-icon>
 
-            }
+                </div>
+                <div>
+                  <span [style.text-transform]="'capitalize'">
+                    @if (errorExecutionResult.status === "validation_error") {
+                      validation error (status 400)
 
-          </div>
+                    }
+                    @else {
+                      internal error (status 500)
 
+                    }
+
+                  </span>
+
+                </div>
+
+              </div>
+
+              <p>
+                Não foi possível processar a execução do seu script.
+                {{
+                  (errorExecutionResult.status === "validation_error") ?
+                  "Houve um erro na validação do payload no servidor" :
+                  "Houve um erro interno do servidor"
+
+                }}.
+                Por favor, tente novamente.
+
+              </p>
+              <div [class]="'code-editor__error-server-message'">
+                [ERROR_RESPONSE_SERVER]: {{ errorExecutionResult.message }}
+
+              </div>
+
+            </div>
+
+          }
+
+          @else {
+            <div [class]="'code-editor__output-content success'" [class.error]="(status?.status === 'error')">
+              @for (out of output(); track $index) {
+                <p>{{ out }}</p>
+
+              }
+
+            </div>
+
+          }
         </div>
 
         @if (truncatedOutput()) {

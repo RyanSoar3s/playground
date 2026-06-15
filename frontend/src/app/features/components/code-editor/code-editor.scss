@@ -295,7 +295,7 @@
   @include h($height: calc(100% - 60px));
   @include p($padding: 20px 20px 0px 15px);
 
-  & .code__editor__output-content {
+  & .code-editor__output-content {
     @include c($color: #34d399);
     white-space: pre-wrap;
     word-break: break-all;
@@ -335,6 +335,50 @@
   @include f-weight($weight: 600);
   @include p($padding: 10px);
   border-top: 1px solid #ffffff0d;
+
+}
+
+.code-editor__error-server {
+  @include bg($color: #ef444408);
+  @include flex;
+  @include flex-col;
+  @include gap($gap: 12px);
+  @include border(1px, solid, #ef444426);
+  @include radius($radius: 8px);
+  @include p($padding: 18px);
+  @include m($margin: 15px 0px);
+
+  &-icon {
+    @include c($color: #ef4444);
+
+  }
+
+  &-title {
+    @include c($color: #fca5a5);
+    @include flex;
+    @include align-center;
+    @include gap($gap: 10px);
+    @include f-size($size: 1.1em);
+    @include f-weight($weight: 600);
+
+  }
+
+  & p {
+    @include c($color: #a1a1aa);
+    @include f-size($size: 0.9em);
+    line-height: 1.5;
+
+  }
+  &-message {
+    @include bg($color: #0000004d);
+    @include c($color: #71717a);
+    @include p($padding: 6px 10px);
+    @include radius($radius: 4px);
+    font-family: monospace;
+    @include f-size($size: 12px);
+    @include border(1px, solid, #ffffff08);
+
+  }
 
 }
 
