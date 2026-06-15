@@ -1,25 +1,41 @@
 import generateId from "@utils/generate-id";
-import type { Languages, Runtime } from "@models/languages.model";
+import type { Languages } from "@models/languages.model";
 import type { ExecutionRequest } from "@models/request.model";
 import { writeFile, exists, mkdir, unlink } from "node:fs/promises";
 import type { ErrorResult, ExecutionResult } from "@models/response.model";
 import getNodeJsCommand from "@utils/nodejs.util";
+import getBunCommand from "@utils/bun.util";
+import getCPythonCommand from "@utils/cpython.util";
+import getPypyCommand from "@utils/pypy.util";
 import runner from "@runners/runner";
 import HttpError from "@errors/http-error";
 
 export default class ExecutionService {
   private payload: ExecutionRequest;
 
-  private readonly getCommands: Record<Languages, Record<Runtime, (filePathLocal: string, extension: string) => string[]>> = {
+  private readonly getCommands: Record<Languages, Record<string, (filePathLocal: string, extension: string) => string[]>> = {
     javascript: {
-      nodejs: getNodeJsCommand
+      nodejs: getNodeJsCommand,
+      bun: getBunCommand
+
+    },
+    typescript: {
+      nodejs: getNodeJsCommand,
+      bun: getBunCommand
+
+    },
+    python: {
+      cpython: getCPythonCommand,
+      pypy: getPypyCommand
 
     }
 
   };
 
   private readonly extensions: Record<Languages, string> = {
-    javascript: "js"
+    javascript: "js",
+    typescript: "ts",
+    python: "py"
 
   };
 
@@ -57,8 +73,7 @@ export default class ExecutionService {
         "-v"
 
       ]
-
-      start.push(...this.getCommands[lang][runtime](filePathLocal, extension));
+      start.push(...this.getCommands[lang][runtime]!(filePathLocal, extension));
 
       const kill = [
         "docker",
