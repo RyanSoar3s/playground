@@ -1,7 +1,7 @@
-export type Languages = "javascript";
-export type LanguageLabels = "JavaScript";
+export type Languages = "javascript" | "typescript" | "python";
+export type LanguageLabels = "JavaScript" | "TypeScript" | "Python";
 
-export type Runtime = "nodejs";
+export type Runtime = "nodejs" | "bun" | "cpython" | "pypy";
 
 export type LanguageList = {
   languages: Array<{
