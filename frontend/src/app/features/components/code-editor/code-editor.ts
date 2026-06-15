@@ -165,9 +165,12 @@ export class CodeEditor implements OnDestroy {
         if (lang && !this.languagesLabel()) {
           const initialLanguage = lang.languages[0];
           const initialRuntime = initialLanguage.runtimes[0];
+          const runtimes: `${Runtime} (v${string})`[] = [];
+
+          initialLanguage.runtimes.forEach((runtime) => runtimes.push(`${runtime.type} (v${runtime.version})`));
 
           this.languagesLabel.set(initialLanguage.label);
-          this.languageRuntimes.set([ `${initialRuntime.type} (v${initialRuntime.version})` ]);
+          this.languageRuntimes.set(runtimes);
           this.languageRuntimeSelected.set(initialRuntime.type);
 
         }
@@ -244,7 +247,7 @@ export class CodeEditor implements OnDestroy {
         this.outputSignal.set(((outputMsg) ? outputMsg : "EMPTY\n").split("\n").slice(0, -1));
 
         this.durationMsSignal.set(`${output.durationMs}ms`);
-        this.statusCodeSignal.set({ status: output.status, code: output.exitCode });
+        this.statusCodeSignal.set({ status: output.status, code: output.exitCode }); console.log(output)
         this.truncatedOutputSignal.set(output.stdout.truncated);
       },
       error: (err) => {
@@ -265,6 +268,9 @@ export class CodeEditor implements OnDestroy {
   }
 
   private changeLanguage(label: string): void {
+    this.code.set("");
+    this.outputSignal.set([]);
+    this.durationMsSignal.set(undefined);
     this.languagesLabel.set(label as LanguageLabels);
 
     const langs = this.languages();
@@ -274,8 +280,12 @@ export class CodeEditor implements OnDestroy {
 
       if (lang.length !== 0) {
         const runtimes = lang[0].runtimes;
+        const runtimeList: `${Runtime} (v${string})`[] = [];
 
-        this.languageRuntimes.set([ `${runtimes[0].type} (v${runtimes[0].version})` ]);
+        runtimes.forEach((runtime) => runtimeList.push(`${runtime.type} (v${runtime.version})`));
+
+        this.languageRuntimeSelected.set(runtimes[0].type);
+        this.languageRuntimes.set(runtimeList);
 
       }
 
@@ -286,6 +296,9 @@ export class CodeEditor implements OnDestroy {
   private changeRuntime(runtime: string): void {
     const [ type, _ ] = runtime.split(" ");
     this.languageRuntimeSelected.set(type as Runtime);
+
+    this.outputSignal.set([]);
+    this.durationMsSignal.set(undefined);
 
   }
 
