@@ -401,6 +401,6 @@
 }
 
 .error {
-  @include c($color: #ef4444);
+  @include c($color: #ef4444 !important);
 
 }
