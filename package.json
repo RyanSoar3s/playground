@@ -1,0 +1,17 @@
+{
+  "name": "playground",
+  "type": "module",
+  "private": true,
+  "author": "Ryan Soares",
+  "description": "Playground for code execution",
+  "keywords": [ "playground", "code", "languages" ],
+  "license": "MIT",
+  "version": "1.0.0",
+  "scripts": {
+    "build:docker": "cd ./docker && bun run build",
+    "build:backend": "cd ./backend && bun run build",
+    "build:frontend": "cd ./frontend && ng build"
+
+  }
+
+}

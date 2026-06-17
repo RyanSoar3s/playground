@@ -1,9 +1,10 @@
 {
-  "name": "backend",
+  "name": "playground-backend",
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun run --hot ./src/app.ts"
+    "start": "bun run --hot ./src/app.ts",
+    "build": "bun build ./src/app.ts --outdir dist"
   },
   "devDependencies": {
     "@types/bun": "latest"

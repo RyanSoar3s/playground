@@ -1,5 +1,5 @@
 {
-  "name": "playground-backend",
+  "name": "playground-docker",
   "type": "module",
   "private": true,
   "scripts": {
