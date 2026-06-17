@@ -1,0 +1,14 @@
+{
+  "name": "playground-backend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "bun run ./main.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
