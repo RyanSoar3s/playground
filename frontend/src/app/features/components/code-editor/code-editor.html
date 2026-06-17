@@ -1,0 +1,264 @@
+@let XL = responsive.isXl();
+@let LG = responsive.isLg();
+
+<section [class]="'options'">
+  <div [class]="'options__box-selections'">
+    @for (box of boxSelection; track $index) {
+      <div
+        [class]="'options__box-wrapper'"
+        [attr.box-name]="box.name"
+        [class.options__box-wrapper--disabled]="
+          (box.name === 'linguagem' || box.name === 'runtime') && isLoadingCodeExecution()
+        "
+      >
+        <p [class]="'options__box-name'">{{ box.name }}</p>
+        <div
+          [class]="'options__box-input options__box-selection'"
+          [class.open-menu]="box.isOpen"
+          (click)="void selectBox($index)"
+          [class.options__box-selection--disabled]="
+            (box.name === 'linguagem' || box.name === 'runtime') && isLoadingCodeExecution()
+          "
+        >
+          <span>{{ box.label() }}</span>
+
+          <div
+            [class.rotate-up]="box.interacted && box.isOpen"
+            [class.rotate-down]="box.interacted && !box.isOpen"
+          >
+            <fa-icon [icon]="faCaretDown"></fa-icon>
+
+          </div>
+
+        </div>
+
+        <div>
+          @if (box.isOpen) {
+            <ul [class]="'options-list'">
+              @for (el of box.list(); track $index) {
+                <li
+                  [class.option-selected]="
+                    el.includes(languageSelected()!) ||
+                    el.includes(runtimeSelected()!) ||
+                    el.includes(themeSelected()!)
+                  "
+                  (click)="box.isOpen = !box.isOpen; void selectOption(box.name, el)"
+                >
+                  {{ el }}
+
+                </li>
+
+              }
+
+            </ul>
+
+          }
+
+        </div>
+
+      </div>
+    }
+
+    <div [class]="'options__box-wrapper'">
+      <p [class]="'options__box-name'">fonte</p>
+      <div [class]="'options__box-input options__box-font-selector'">
+        <input
+          type="range"
+          name="range"
+          id="range"
+          min="10"
+          max="26"
+          [ngModel]="fontSize()"
+          (ngModelChange)="fontSize.set($event)"
+
+        >
+        <p [class]="'options__box-font-value'">
+          {{ fontSize() }}px
+
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <button
+    [class]="'options__btn-run options__btn-run--bg'"
+    [style.width]="!(XL || LG) ? '100%' : 'auto'"
+    [disabled]="isLoadingCodeExecution() || !code()"
+    (click)="void executeCode()"
+
+  >
+    <fa-icon [icon]="faCaretRight"></fa-icon>
+    <span>Executar Código</span>
+
+  </button>
+
+</section>
+
+<section
+  [class]="'code-editor'"
+  [style.flex-direction]="(XL || LG) ? 'row' : 'column'"
+
+>
+  <nu-monaco-editor
+    [class]="'code-editor__editor'"
+    [class.code-editor__full-width]="!(XL || LG)"
+    [options]="configs()!"
+    [autoFormat]="true"
+    [ngModel]="code()"
+    (ngModelChange)="code.set($event)"
+
+  ></nu-monaco-editor>
+  <div
+    [class]="'code-editor__output code-editor--output-style'"
+    [class.code-editor__full-width]="!(XL || LG)"
+
+  >
+    <div [class]="'code-editor__output-header'">
+      <h5>Console / Saída</h5>
+
+      <div [class]="'code-editor__info' + ((isLoadingCodeExecution()) ? ' code-editor__info--loader' : '')">
+        @if (isLoadingCodeExecution()) {
+          <p [class]="'code-editor__running'">Running</p>
+          <app-spin-loader [height]="'18px'" [width]="'18px'"></app-spin-loader>
+
+        }
+        @else if (durationMs()) {
+          <p>{{ durationMs() }} <fa-icon [icon]="faCircleCheck" [style]="'color: #65e6bfff'"></fa-icon></p>
+
+        }
+
+      </div>
+
+    </div>
+
+    <div [class]="'code-editor__output-msg'">
+      @let status = statusCode();
+      @let errorExecutionResult = errorExecution();
+
+      @if (output().length === 0 && !isLoadingCodeExecution() && !inputRequested()) {
+        <div [class]="'code-editor__output-content code-editor__output-empty'">
+          Console limpo. Clique em "Executar Código" acima.
+
+        </div>
+
+
+      }
+
+      @else {
+        <div>
+          <div [class]="'code-editor__output-meta-before'">
+            <fa-icon [icon]="faTerminal"></fa-icon>
+
+            <p>
+              [<span [style.text-transform]="'capitalize'">{{ runtimeSelected() }}</span>]
+              Ambiente de execução <span>{{ languageSelected() }} inicializado</span>
+
+            </p>
+
+          </div>
+
+          @if (errorExecutionResult) {
+            <div [class]="'code-editor__error-server'">
+              <div [class]="'code-editor__error-server-title'">
+                <div [class]="'code-editor__error-server-icon'">
+                  <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+
+                </div>
+                <div>
+                  <span [style.text-transform]="'capitalize'">
+                    @if (errorExecutionResult.status === "validation_error") {
+                      validation error (status 400)
+
+                    }
+                    @else {
+                      internal error (status 500)
+
+                    }
+
+                  </span>
+
+                </div>
+
+              </div>
+
+              <p>
+                Não foi possível processar a execução do seu script.
+                {{
+                  (errorExecutionResult.status === "validation_error") ?
+                  "Houve um erro na validação do payload no servidor" :
+                  "Houve um erro interno do servidor"
+
+                }}.
+                Por favor, tente novamente.
+
+              </p>
+              <div [class]="'code-editor__error-server-message'">
+                [ERROR_RESPONSE_SERVER]: {{ errorExecutionResult.message }}
+
+              </div>
+
+            </div>
+
+          }
+
+          @else {
+            <div [class]="'code-editor__output-content success'" [class.error]="hasExecutionFailure()">
+              @for (out of output(); track $index) {
+                <p>{{ out }}</p>
+
+              }
+
+            </div>
+
+          }
+          @if (inputRequested()) {
+            <div [class]="'stdin-input'">
+              <input
+                #stdinInput
+                type="text"
+                name="stdin"
+                autocomplete="off"
+                [ngModel]="stdinValue()"
+                (ngModelChange)="stdinValue.set($event)"
+
+              >
+              <span [class]="'stdin-value__wrapper'">
+                <span [class]="'stdin-value'">{{ stdinValue() }}</span>
+
+              </span>
+
+            </div>
+
+          }
+        </div>
+
+        @if (truncatedOutput()) {
+          <div [class]="'warning'">
+            <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+            <span><span [style.text-transform]="'uppercase'">[trucanted]</span> output exceeded character limit</span>
+
+          </div>
+
+        }
+
+        <div [class]="'code-editor__output-meta-after'">
+          status code:
+          @if (!status) { - }
+          @else {
+            <span [class]="'success'" [class.error]="hasExecutionFailure()">{{ status.code }} </span>
+            <span [class]="'success'" [class.error]="hasExecutionFailure()">({{ status.status }})</span>
+
+          }
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</section>

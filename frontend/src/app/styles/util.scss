@@ -1,0 +1,195 @@
+@use "sass:list";
+
+@mixin dimension($height: 100%, $width: 100%) {
+  height: $height;
+  width: $width;
+
+}
+
+@mixin h($height) {
+  height: $height;
+
+}
+
+@mixin max-h($height) {
+  max-height: $height;
+
+}
+
+@mixin w($width) {
+  width: $width;
+
+}
+
+@mixin max-w($width) {
+  max-width: $width;
+
+}
+
+@mixin min-w($width) {
+  min-width: $width;
+
+}
+
+@mixin block {
+  display: block;
+
+}
+
+
+@mixin flex {
+  display: flex;
+
+}
+
+@mixin flex-full-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+@mixin flex-col {
+  flex-direction: column;
+
+}
+
+@mixin align-center {
+  align-items: center;
+
+}
+
+@mixin justify-between {
+  justify-content: space-between;
+
+}
+
+@mixin flex-wrap {
+  flex-wrap: wrap;
+
+}
+
+@mixin gap($gap) {
+  gap: $gap;
+
+}
+
+@mixin c($color) {
+  color: $color;
+
+}
+
+@mixin c-white {
+  color: white;
+
+}
+
+@mixin bg($color) {
+  background-color: $color;
+
+}
+
+@mixin relative {
+  position: relative;
+
+}
+
+@mixin absolute {
+  position: absolute;
+
+}
+
+@mixin sticky {
+  position: sticky;
+
+}
+
+@mixin fixed {
+  position: fixed;
+
+}
+
+@mixin z($index) {
+  z-index: $index;
+
+}
+
+@mixin pointer {
+  cursor: pointer;
+
+}
+
+@mixin select-none {
+  user-select: none;
+
+}
+
+@mixin overflow($axis: null, $value) {
+  @if ($axis) {
+    overflow-#{$axis}: $value;
+
+  }
+
+  @else {
+    overflow: $value;
+
+  }
+
+}
+
+@mixin f-size($size) {
+  font-size: $size;
+
+}
+
+@mixin f-weight($weight) {
+  font-weight: $weight;
+
+}
+
+@mixin uppercase {
+  text-transform: uppercase;
+
+}
+
+@mixin radius($radius) {
+  border-radius: $radius;
+
+}
+
+@mixin shadow($value...) {
+  box-shadow: $value;
+
+}
+
+@mixin border($args...) {
+  $width: list.nth($args, 1);
+  $style: list.nth($args, 2);
+  $color: list.nth($args, 3);
+
+  @if $width {
+    border-width: $width;
+
+  }
+
+  @if $style {
+    border-style: $style;
+
+  }
+
+  @if $color {
+    border-color: $color;
+
+  }
+
+}
+
+@mixin p($padding) {
+  padding: $padding;
+
+}
+
+@mixin m($margin) {
+  margin: $margin;
+
+}

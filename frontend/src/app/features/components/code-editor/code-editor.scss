@@ -1,0 +1,462 @@
+@use "@styles/util.scss" as *;
+@use "sass:list";
+
+@keyframes rotateUp {
+  from {
+    transform: rotate(0deg);
+
+  }
+  to {
+    transform: rotate(180deg);
+
+  }
+
+}
+
+@keyframes rotateDown {
+  from {
+    transform: rotate(180deg);
+
+  }
+  to {
+    transform: rotate(0deg);
+
+  }
+
+}
+
+@keyframes cursor-blink {
+  50% {
+    border-color: transparent;
+
+  }
+
+}
+
+:host {
+  @include dimension($height: auto, $width: 100%);
+  @include relative;
+  @include flex-full-center;
+  @include flex-col;
+  @include justify-between;
+
+}
+
+.loading-data {
+  @include dimension($height: 100%, $width: 100%);
+  @include absolute;
+  @include flex-full-center;
+  @include bg($color: #0000003a);
+  @include z($index: 999);
+
+}
+
+.options {
+  @include dimension($height: 100%, $width: 100%);
+  @include flex;
+  @include align-center;
+  @include justify-between;
+  @include flex-wrap;
+  @include gap($gap: 27px);
+  @include m($margin: 25px 0px);
+  @include p($padding: 0px 40px);
+
+  &__box-selections {
+    @include flex;
+    @include justify-between;
+    @include flex-wrap;
+    @include gap($gap: 20px);
+
+  }
+
+
+}
+
+.options__box-wrapper {
+  @include flex;
+  @include flex-col;
+  @include gap($gap: 7px);
+
+  p.options__box-name {
+    @include c($color: #8a8a93);
+    @include f-size($size: 11px);
+    @include f-weight($weight: 600);
+    @include uppercase;
+    letter-spacing: 0.5px;
+
+  }
+
+  .options__box-input {
+    @include bg($color: #252529);
+    @include relative;
+    @include flex;
+    @include align-center;
+    @include justify-between;
+    @include h($height: 38px);
+    @include min-w($width: 160px);
+    @include c-white;
+    @include border(1px, solid, #3f3f46);
+    @include p($padding: 8px 12px);
+    @include radius($radius: 6px);
+    @include f-size($size: 13px);
+
+    input[type="range"] {
+      @include w($width: 100px);
+      @include pointer;
+
+    }
+
+  }
+
+  &--disabled {
+    opacity: 0.7;
+    cursor: default;
+
+    .options__box-name {
+      opacity: 0.7;
+
+    }
+
+    .options__box-selection {
+      cursor: default;
+      pointer-events: none;
+
+    }
+
+  }
+
+  .options__box-selection {
+    @include select-none;
+    @include pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+
+    &:hover {
+      @include bg($color: #2d2d33);
+      @include border(null, null, #52525b);
+
+    }
+
+    &--disabled {
+      opacity: 0.7;
+      cursor: default;
+      pointer-events: none;
+
+    }
+
+  }
+
+  .options__box-font-selector {
+    @include gap($gap: 10px);
+
+     .options__box-font-value {
+      @include c($color: #3b82f6);
+      @include min-w($width: 30px);
+      @include f-size($size: 12px);
+      @include f-weight($weight: bold);
+      text-align: right;
+
+    }
+
+  }
+
+}
+
+.open-menu {
+  @include border(null, null, #3b82f6 !important);
+  @include shadow((0px 0px 0px 2px #3b82f633, ));
+
+}
+
+.rotate-down {
+  transform: rotate(0deg);
+  animation: rotateDown .3s linear;
+
+}
+
+.rotate-up {
+  transform: rotate(180deg);
+  animation: rotateUp .3s linear;
+
+}
+
+.options-list {
+  @include dimension($height: auto, $width: 160px);
+  @include absolute;
+  @include bg($color: #1f1f23);
+  @include border(1px, solid, #3f3f46);
+  @include radius($radius: 6px);
+  @include shadow((0px 10px 15px -3px #00000080));
+  @include max-h($height: 250px);
+  @include overflow($axis: y, $value: auto);
+  @include pointer;
+  @include select-none;
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  @include z($index: 10);
+
+  li {
+    @include p($padding: 8px 12px);
+    @include f-size($size: 0.9em);
+
+    &:hover {
+      @include bg($color: #2d2d33);
+      @include c-white;
+
+    }
+
+    &.option-selected {
+      @include bg($color: #3b82f6 !important);
+
+    }
+
+  }
+
+}
+
+.options__btn-run {
+  @include c-white;
+  @include flex-full-center;
+  @include h($height: 40px);
+  @include border(0px, none, transparent);
+  @include p($padding: 10px 20px);
+  @include radius($radius: 6px);
+  @include f-size($size: 14px);
+  @include f-weight($weight: 600);
+  @include pointer;
+  @include shadow((0px 2px 4px #10b98133));
+  transition: background-color 0.2s, transform 0.1s;
+
+  &:hover {
+    @include bg(#059669);
+
+  }
+
+}
+
+.options__btn-run--bg {
+  &, &:disabled:hover {
+    @include bg(#10b981);
+
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: default;
+
+  }
+
+}
+
+.code-editor {
+  @include dimension($height: 100%, $width: 100%);
+  @include flex-full-center;
+
+  &__editor, &__output {
+    @include dimension($height: 750px !important, $width: 50%);
+
+  }
+
+  &__full-width {
+    @include w($width: 100%);
+
+  }
+
+  &--output-style {
+    @include bg($color: #0f0f11);
+
+  }
+
+}
+
+.code-editor__output {
+  @include overflow($axis: null, $value: auto);
+  scrollbar-width: none;
+
+  &-header {
+    @include bg($color: #141416);
+    @include c($color: #71717a);
+    @include sticky;
+    @include flex;
+    @include justify-between;
+    @include h($height: 63px);
+    @include p($padding: 15px);
+    top: 0px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #2d2d34;
+    @include z($index: 999);
+
+    & h5 {
+      @include f-weight($weight: 700);
+      @include uppercase;
+      @include p($padding: 7px 0px);
+
+    }
+
+    & p {
+      @include f-size($size: 0.9em);
+
+    }
+
+  }
+
+}
+
+.code-editor__info {
+  @include flex;
+  @include gap($gap: 5px);
+  @include p($padding: 7px);
+  @include radius($radius: 15px);
+
+  &--loader {
+    @include bg($color: #162556);
+
+  }
+
+  & p.code-editor__running {
+    @include c($color: #51a2ff);
+    @include f-size($size: 0.85em);
+    @include f-weight($weight: 600);
+
+  }
+
+}
+
+.code-editor__output-msg {
+  @include relative;
+  @include flex;
+  @include flex-col;
+  @include justify-between;
+  @include h($height: calc(100% - 60px));
+  @include p($padding: 20px 20px 0px 15px);
+
+  & .code-editor__output-content {
+    @include c($color: #34d399);
+    white-space: pre-wrap;
+    word-break: break-all;
+
+  }
+
+  & .code-editor__output-empty {
+    @include c($color: #71717a);
+    font-style: italic;
+
+  }
+
+}
+
+.code-editor__output-meta-before {
+  @include c($color: #60a5fa);
+  @include flex;
+  @include align-center;
+  @include gap($gap: 6px);
+  @include f-size($size: 0.9em);
+  @include f-weight($weight: 600);
+  border-bottom: 1px solid #ffffff0d;
+  padding-bottom: 10px;
+
+}
+
+.code-editor__output-content {
+  @include p($padding: 5px 0px);
+
+}
+
+.stdin-input {
+  & input[type=text] {
+    @include bg($color: transparent);
+    @include w($width: 0px);
+    @include border(0px, none, transparent);
+    outline: none;
+
+  }
+
+  .stdin-value__wrapper {
+    margin-right: 5px;
+    border-right: 5px solid white;
+    animation: 1s step-end 0s infinite normal none running cursor-blink;
+
+    .stdin-value {
+      margin-right: 5px;
+
+    }
+
+  }
+
+}
+
+.code-editor__output-meta-after {
+  @include bg($color: #0f0f11);
+  @include c($color: #71717a);
+  @include w($width: 100%);
+  @include f-size($size: 0.78em);
+  @include f-weight($weight: 600);
+  @include p($padding: 10px);
+  border-top: 1px solid #ffffff0d;
+
+}
+
+.code-editor__error-server {
+  @include bg($color: #ef444408);
+  @include flex;
+  @include flex-col;
+  @include gap($gap: 12px);
+  @include border(1px, solid, #ef444426);
+  @include radius($radius: 8px);
+  @include p($padding: 18px);
+  @include m($margin: 15px 0px);
+
+  &-icon {
+    @include c($color: #ef4444);
+
+  }
+
+  &-title {
+    @include c($color: #fca5a5);
+    @include flex;
+    @include align-center;
+    @include gap($gap: 10px);
+    @include f-size($size: 1.1em);
+    @include f-weight($weight: 600);
+
+  }
+
+  & p {
+    @include c($color: #a1a1aa);
+    @include f-size($size: 0.9em);
+    line-height: 1.5;
+
+  }
+  &-message {
+    @include bg($color: #0000004d);
+    @include c($color: #71717a);
+    @include p($padding: 6px 10px);
+    @include radius($radius: 4px);
+    font-family: monospace;
+    @include f-size($size: 12px);
+    @include border(1px, solid, #ffffff08);
+
+  }
+
+}
+
+.warning {
+  @include bg($color: #f59e0b14);
+  @include c($color: #fcd34d);
+  @include flex;
+  @include align-center;
+  @include gap($gap: 8px);
+  @include border(1px, dashed, #f59e0b);
+  @include p($padding: 12px);
+  @include radius($radius: 6px);
+  @include f-size($size: 0.78em);
+
+}
+
+.success {
+  @include c($color: #10b981);
+
+}
+
+.error {
+  @include c($color: #ef4444 !important);
+
+}

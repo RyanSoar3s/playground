@@ -1,0 +1,18 @@
+@use "@styles/util.scss" as *;
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+
+  }
+
+}
+
+:host {
+  @include block;
+  @include border(null, solid, #2b80ff91);
+  border-top-color: #51a2ff;
+  @include radius($radius: 50%);
+  animation: spin 1s linear infinite;
+
+}

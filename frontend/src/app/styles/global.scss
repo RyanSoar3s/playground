@@ -1,0 +1,45 @@
+@use "sass:map";
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
+
+$globalFonts: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$globalBg: #1e1e24;
+$globalColor: #e3e3e6;
+
+$globalConfigs: (
+  "*": (
+    "box-sizing": border-box,
+    "margin": 0px,
+    "padding": 0px
+
+  ),
+  "body": (
+    "font-family": $globalFonts,
+    "height": 100dvh,
+    "width": 100dvw,
+    "background-color": $globalBg,
+    "color": $globalColor,
+    "display": flex,
+    "flex-direction": column,
+    "overflow-x": hidden
+
+  ),
+  "li": (
+    "list-style": none
+
+  )
+
+);
+
+@mixin configureGlobalStyles {
+  @each $el, $styles in $globalConfigs {
+    #{$el} {
+      @each $prop, $value in $styles {
+        #{$prop}: $value;
+
+      }
+
+    }
+
+  }
+
+}

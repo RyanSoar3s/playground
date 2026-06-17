@@ -1,0 +1,8 @@
+@use "@styles/util.scss" as *;
+
+:host {
+  @include dimension($height: 100dvh, $width: 100dvw);
+  @include flex;
+  @include flex-col;
+  @include justify-between;
+}
