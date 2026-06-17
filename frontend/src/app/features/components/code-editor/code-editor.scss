@@ -107,6 +107,23 @@
 
   }
 
+  &--disabled {
+    opacity: 0.7;
+    cursor: default;
+
+    .options__box-name {
+      opacity: 0.7;
+
+    }
+
+    .options__box-selection {
+      cursor: default;
+      pointer-events: none;
+
+    }
+
+  }
+
   .options__box-selection {
     @include select-none;
     @include pointer;
@@ -115,6 +132,13 @@
     &:hover {
       @include bg($color: #2d2d33);
       @include border(null, null, #52525b);
+
+    }
+
+    &--disabled {
+      opacity: 0.7;
+      cursor: default;
+      pointer-events: none;
 
     }
 

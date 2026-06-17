@@ -4,9 +4,22 @@
 <section [class]="'options'">
   <div [class]="'options__box-selections'">
     @for (box of boxSelection; track $index) {
-      <div [class]="'options__box-wrapper'" [attr.box-name]="box.name">
+      <div
+        [class]="'options__box-wrapper'"
+        [attr.box-name]="box.name"
+        [class.options__box-wrapper--disabled]="
+          (box.name === 'linguagem' || box.name === 'runtime') && isLoadingCodeExecution()
+        "
+      >
         <p [class]="'options__box-name'">{{ box.name }}</p>
-        <div [class]="'options__box-input options__box-selection'" [class.open-menu]="box.isOpen" (click)="void selectBox($index)">
+        <div
+          [class]="'options__box-input options__box-selection'"
+          [class.open-menu]="box.isOpen"
+          (click)="void selectBox($index)"
+          [class.options__box-selection--disabled]="
+            (box.name === 'linguagem' || box.name === 'runtime') && isLoadingCodeExecution()
+          "
+        >
           <span>{{ box.label() }}</span>
 
           <div
