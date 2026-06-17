@@ -1,0 +1,48 @@
+@use "@styles/util.scss" as *;
+
+:host {
+  @include flex;
+  @include h($height: 60px);
+
+}
+
+.header {
+  @include dimension($height: auto, $width: 100%);
+  @include flex;
+  @include align-center;
+  @include justify-between;
+  @include p($padding: 16px 40px);
+  @include bg($color: #16161a);
+  border-bottom: 1px solid #2d2d34;
+
+  &__brand {
+    @include flex;
+    @include align-center;
+    @include gap($gap: 12px);
+
+    h1 {
+      @include f-size($size: 22px);
+      @include f-weight($weight: 700);
+      @include c-white;
+      letter-spacing: -0.5px;
+
+    }
+
+  }
+
+  &__nav {
+    @include flex;
+    @include align-center;
+    @include gap($gap: 16px);
+
+  }
+
+  &__subtitle {
+    @include c($color: #71717a);
+    @include f-size($size: 13px);
+    @include f-weight($weight: 500);
+    letter-spacing: 0.3px;
+
+  }
+
+}

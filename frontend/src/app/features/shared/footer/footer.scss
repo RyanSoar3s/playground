@@ -1,0 +1,18 @@
+@use "@styles/util.scss" as *;
+
+.footer {
+  @include dimension($height: auto, $width: 100%);
+  @include flex-full-center;
+  @include p($padding: 14px 40px);
+  @include bg($color: #16161a);
+  border-top: 1px solid #2d2d34;
+
+  &__text {
+    @include c($color: #71717a);
+    @include f-size($size: 12px);
+    @include f-weight($weight: 500);
+    letter-spacing: 0.3px;
+
+  }
+
+}
