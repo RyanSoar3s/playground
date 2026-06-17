@@ -1,17 +1,20 @@
 import generateId from "@utils/generate-id";
 import type { Languages } from "@models/languages.model";
 import type { ExecutionRequest } from "@models/request.model";
-import { writeFile, exists, mkdir, unlink } from "node:fs/promises";
 import type { ErrorResult, ExecutionResult } from "@models/response.model";
+import type { ExecutionCallbacks } from "@models/execution.model";
+import { writeFile, exists, mkdir, unlink } from "node:fs/promises";
 import getNodeJsCommand from "@utils/nodejs.util";
 import getBunCommand from "@utils/bun.util";
 import getCPythonCommand from "@utils/cpython.util";
 import getPypyCommand from "@utils/pypy.util";
-import runner from "@runners/runner";
+import Runner from "@runners/runner";
 import HttpError from "@errors/http-error";
 
 export default class ExecutionService {
-  private payload: ExecutionRequest;
+  private runner?: Runner;
+  private readonly id = generateId();
+  private readonly temp = "/tmp/playground";
 
   private readonly getCommands: Record<Languages, Record<string, (filePathLocal: string, extension: string) => string[]>> = {
     javascript: {
@@ -39,67 +42,65 @@ export default class ExecutionService {
 
   };
 
-  constructor(payload: ExecutionRequest) {
-    this.payload = payload;
+  constructor(private readonly payload: ExecutionRequest) {}
+
+  get metadata() {
+    return {
+      id: this.id,
+      language: this.payload.language,
+      runtime: this.payload.runtime
+
+    };
 
   }
 
-  async execute(): Promise<ExecutionResult> {
+  async execute(callbacks: ExecutionCallbacks = {}): Promise<ExecutionResult> {
     const lang = this.payload.language;
     const runtime = this.payload.runtime;
     const code = this.payload.code;
-    const stdin = this.payload.stdin;
-
-    const id = generateId();
     const extension = this.extensions[lang];
-    const path = `${id}.${extension}`;
-    const temp = "/tmp/playground";
-    const filePathLocal = `${temp}/${path}`;
-
+    const path = `${this.id}.${extension}`;
+    const filePathLocal = `${this.temp}/${path}`;
 
     try {
-      if (!(await exists(temp))) await mkdir(temp, { recursive: true });
+      if (!(await exists(this.temp))) await mkdir(this.temp, { recursive: true });
 
       await writeFile(filePathLocal, code);
+
       const start = [
         "docker",
         "run",
         "--rm",
-        "--name", `runner_${id}`,
+        "--name", `runner_${this.id}`,
         "--network", "none",
         "--memory", "128m",
         "--cpus", "0.5",
         "-i",
         "-v"
+      ];
 
-      ]
       start.push(...this.getCommands[lang][runtime]!(filePathLocal, extension));
 
       const kill = [
         "docker",
         "kill",
-        `runner_${id}`
+        `runner_${this.id}`
 
       ];
 
-      let runnerResult = await runner({
-        start,
-        kill
+      this.runner = new Runner({ start, kill }, callbacks);
+      const runnerResult = await this.runner.execute();
 
-      }, stdin);
-
-      const result = {
-        id,
+      return {
+        id: this.id,
         language: lang,
         runtime,
         ...runnerResult
 
       } satisfies ExecutionResult;
 
-      return result;
-
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error(`error: ${error}`);
 
       throw new HttpError(500, {
@@ -111,11 +112,18 @@ export default class ExecutionService {
 
     }
     finally {
-      await unlink(filePathLocal)
-      .catch(() => {});
+      await unlink(filePathLocal).catch(() => {});
 
     }
+  }
+
+  async writeStdin(value: string): Promise<void> {
+    await this.runner?.writeStdin(value);
 
   }
 
+  cancel(): void {
+    this.runner?.cancel();
+    
+  }
 }
