@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, computed, Signal, effect, OnDestroy, EffectRef } from '@angular/core';
+import { Component, ElementRef, inject, signal, computed, Signal, effect, OnDestroy, EffectRef, viewChild } from '@angular/core';
 import { NuMonacoEditorComponent } from "@ng-util/monaco-editor";
 import { GetLanguages } from '@core/services/get-languages';
 import { FormsModule } from '@angular/forms';
@@ -9,11 +9,11 @@ import { faCaretDown, faCaretRight, faTerminal, faTriangleExclamation } from '@f
 import { SpinLoader } from '@features/shared/spin-loader/spin-loader';
 import { Responsive } from '@core/services/responsive';
 import { LanguageLabels, Languages, Runtime } from '@models/language-list.model';
-import { ErrorResult, ExecutionCode, ExecutionStatus } from '@models/code-execution.model';
-import { Api } from '@core/services/api';
-import { finalize } from 'rxjs';
+import { ErrorResult, ExecutionCode, ExecutionServerMessage, ExecutionStatus } from '@models/code-execution.model';
 import { Health } from '@core/services/health';
 import { Router } from '@angular/router';
+import { ExecutionWebSocket } from '@core/services/websocket';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-code-editor',
@@ -28,6 +28,7 @@ import { Router } from '@angular/router';
   styleUrl: './code-editor.scss',
   host: {
     '(click)': 'void closeMenu($event)',
+    '(document:keydown)': 'void handleKeyboard($event)'
 
   }
 
@@ -35,7 +36,7 @@ import { Router } from '@angular/router';
 export class CodeEditor implements OnDestroy {
   protected responsive = inject(Responsive);
   private languagesServices = inject(GetLanguages);
-  private api = inject(Api);
+  private executionWebSocket = inject(ExecutionWebSocket);
   private health = inject(Health);
   private router = inject(Router);
 
@@ -75,11 +76,23 @@ export class CodeEditor implements OnDestroy {
 
   private statusCodeSignal = signal<{ status: ExecutionStatus, code: number | null } | undefined>(undefined);
   protected statusCode = computed(() => this.statusCodeSignal());
+  protected hasExecutionFailure = computed(() => {
+    const status = this.statusCodeSignal()?.status;
+
+    return Boolean(status && status !== "success");
+
+  });
 
   private outputSignal = signal<string[]>([]);
 
   private truncatedOutputSignal = signal(false);
   protected truncatedOutput = computed(() => this.truncatedOutputSignal());
+
+  private inputRequestedSignal = signal(false);
+  protected inputRequested = computed(() => this.inputRequestedSignal());
+
+  protected stdinValue = signal("");
+  protected stdinInput = viewChild<ElementRef<HTMLInputElement>>("stdinInput");
 
   output = computed(() => this.outputSignal());
 
@@ -149,6 +162,7 @@ export class CodeEditor implements OnDestroy {
   ];
 
   private effectRefs!: EffectRef[];
+  private executionSubscription?: Subscription;
 
   constructor() {
     this.effectRefs = [
@@ -221,47 +235,153 @@ export class CodeEditor implements OnDestroy {
     const payload = {
       code,
       language: (this.languageSelected())?.toLocaleLowerCase() as Languages,
-      runtime: this.runtimeSelected() as Runtime,
-      stdin: ""
+      runtime: this.runtimeSelected() as Runtime
 
     } satisfies ExecutionCode;
 
+    this.executionSubscription?.unsubscribe();
     this.isLoadingCodeExecutionSignal.set(true);
     this.errorExecutionSignal.set(undefined);
     this.outputSignal.set([]);
     this.truncatedOutputSignal.set(false);
     this.statusCodeSignal.set(undefined);
+    this.durationMsSignal.set(undefined);
+    this.inputRequestedSignal.set(false);
+    this.stdinValue.set("");
 
-    this.api.executeCode(payload)
-    .pipe(
-      finalize(() => this.isLoadingCodeExecutionSignal.set(false))
-
-    )
+    this.executionSubscription = this.executionWebSocket.executeCode(payload)
     .subscribe({
-      next: (output) => {
-        const stdout = output.stdout.text;
-        const stderr = output.stderr;
+      next: (message) => {
+        this.handleExecutionMessage(message);
 
-        const outputMsg = stdout + stderr;
-
-        this.outputSignal.set(((outputMsg) ? outputMsg : "EMPTY\n").split("\n").slice(0, -1));
-
-        this.durationMsSignal.set(`${output.durationMs}ms`);
-        this.statusCodeSignal.set({ status: output.status, code: output.exitCode }); console.log(output)
-        this.truncatedOutputSignal.set(output.stdout.truncated);
       },
       error: (err) => {
-        const errorResult = err.error as ErrorResult;
-        this.errorExecutionSignal.set(errorResult);
-
-        this.statusCodeSignal.set({
-          code: err.status ?? 500,
-          status: "error"
+        this.handleExecutionError({
+          status: "internal_error",
+          message: err?.message ?? "WebSocket connection failed",
+          errors: []
 
         });
-        console.error(err);
 
       }
+
+    });
+
+  }
+
+  handleKeyboard(event: KeyboardEvent): void {
+    const key = event.key;
+
+    if (!key) return;
+
+    if (key === "Enter") this.submitStdin();
+
+    else if (/^(Backspace|[a-zA-Z0-9])$/.test(key)) this.stdinInput()?.nativeElement.focus();
+
+  }
+
+  private submitStdin(): void {
+    if (!this.isLoadingCodeExecutionSignal()) return;
+
+    this.appendConsoleLine(`> ${this.stdinValue()}\n`);
+    this.executionWebSocket.sendStdin(this.stdinValue().trim());
+    this.stdinValue.set("");
+    this.inputRequestedSignal.set(false);
+
+  }
+
+  private handleExecutionMessage(message: ExecutionServerMessage): void {
+    if (message.type === "output") {
+      this.appendOutput(message.text);
+      return;
+
+    }
+
+    if (message.type === "input_request") {
+      this.inputRequestedSignal.set(true);
+      return;
+
+    }
+
+    if (message.type === "result") {
+      const output = message.result;
+
+      if (output.status === "timeout") {
+        this.appendConsoleLine("[timeout] execução interrompida por inatividade ou tempo limite.");
+
+      }
+
+      if (this.outputSignal().length === 0) this.outputSignal.set([ "EMPTY" ]);
+      else this.trimTrailingOutputLine();
+
+      this.inputRequestedSignal.set(false);
+      this.isLoadingCodeExecutionSignal.set(false);
+      this.durationMsSignal.set(`${output.durationMs}ms`);
+      this.statusCodeSignal.set({ status: output.status, code: output.exitCode });
+      this.truncatedOutputSignal.set(output.stdout.truncated);
+      return;
+
+    }
+
+    if (message.type === "error") {
+      this.handleExecutionError(message.error);
+
+    }
+
+  }
+
+  private appendConsoleLine(text: string): void {
+    const lines = [ ...this.outputSignal() ];
+
+    if (lines.at(-1) === "") {
+      lines[lines.length - 1] = text;
+
+    }
+    else {
+      lines.push(text);
+
+    }
+
+    this.outputSignal.set(lines);
+
+  }
+
+  private appendOutput(text: string): void {
+    const lines = [ ...this.outputSignal() ];
+    const chunks = text.split("\n");
+
+    if (lines.length === 0) lines.push("");
+
+    lines[lines.length - 1] = `${lines[lines.length - 1]}${chunks[0]}`;
+
+    for (const chunk of chunks.slice(1)) {
+      lines.push(chunk);
+
+    }
+
+    this.outputSignal.set(lines);
+
+  }
+
+  private trimTrailingOutputLine(): void {
+    const lines = [ ...this.outputSignal() ];
+
+    if (lines.at(-1) === "") {
+      lines.pop();
+      this.outputSignal.set(lines);
+
+    }
+
+  }
+
+  private handleExecutionError(error: ErrorResult): void {
+    this.errorExecutionSignal.set(error);
+    this.inputRequestedSignal.set(false);
+    this.isLoadingCodeExecutionSignal.set(false);
+
+    this.statusCodeSignal.set({
+      code: 500,
+      status: "error"
 
     });
 
@@ -329,6 +449,8 @@ export class CodeEditor implements OnDestroy {
 
   ngOnDestroy(): void {
     if (this.effectRefs) this.effectRefs.forEach((ref) => ref.destroy());
+    this.executionSubscription?.unsubscribe();
+    this.executionWebSocket.cancel();
 
   }
 

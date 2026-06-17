@@ -125,7 +125,7 @@
       @let status = statusCode();
       @let errorExecutionResult = errorExecution();
 
-      @if (output().length === 0 && !isLoadingCodeExecution()) {
+      @if (output().length === 0 && !isLoadingCodeExecution() && !inputRequested()) {
         <div [class]="'code-editor__output-content code-editor__output-empty'">
           Console limpo. Clique em "Executar Código" acima.
 
@@ -192,11 +192,30 @@
           }
 
           @else {
-            <div [class]="'code-editor__output-content success'" [class.error]="(status?.status === 'error')">
+            <div [class]="'code-editor__output-content success'" [class.error]="hasExecutionFailure()">
               @for (out of output(); track $index) {
                 <p>{{ out }}</p>
 
               }
+
+            </div>
+
+          }
+          @if (inputRequested()) {
+            <div [class]="'stdin-input'">
+              <input
+                #stdinInput
+                type="text"
+                name="stdin"
+                autocomplete="off"
+                [ngModel]="stdinValue()"
+                (ngModelChange)="stdinValue.set($event)"
+
+              >
+              <span [class]="'stdin-value__wrapper'">
+                <span [class]="'stdin-value'">{{ stdinValue() }}</span>
+
+              </span>
 
             </div>
 
@@ -216,8 +235,8 @@
           status code:
           @if (!status) { - }
           @else {
-            <span [class]="'success'" [class.error]="(status.status === 'error')">{{ status.code }} </span>
-            <span [class]="'success'" [class.error]="(status.status === 'error')">({{ status.status }})</span>
+            <span [class]="'success'" [class.error]="hasExecutionFailure()">{{ status.code }} </span>
+            <span [class]="'success'" [class.error]="hasExecutionFailure()">({{ status.status }})</span>
 
           }
 

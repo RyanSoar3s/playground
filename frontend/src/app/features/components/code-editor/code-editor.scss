@@ -25,6 +25,14 @@
 
 }
 
+@keyframes cursor-blink {
+  50% {
+    border-color: transparent;
+
+  }
+
+}
+
 :host {
   @include dimension($height: auto, $width: 100%);
   @include relative;
@@ -324,6 +332,29 @@
 
 .code-editor__output-content {
   @include p($padding: 5px 0px);
+
+}
+
+.stdin-input {
+  & input[type=text] {
+    @include bg($color: transparent);
+    @include w($width: 0px);
+    @include border(0px, none, transparent);
+    outline: none;
+
+  }
+
+  .stdin-value__wrapper {
+    margin-right: 5px;
+    border-right: 5px solid white;
+    animation: 1s step-end 0s infinite normal none running cursor-blink;
+
+    .stdin-value {
+      margin-right: 5px;
+
+    }
+
+  }
 
 }
 
