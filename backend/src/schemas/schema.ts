@@ -5,9 +5,8 @@ import type { Languages, Runtime } from "@models/languages.model";
 const executionRequestSchema = z.object({
   language: z.string(),
   runtime: z.string(),
-  code: z.string().min(1, "Code cannot be empty").max(20000, "Code exceeds 20KB limit"),
-  stdin: z.string().max(10000, "Input exceeds 10KB limit").optional(),
-
+  code: z.string().min(1, "Code cannot be empty").max(20000, "Code exceeds 20KB limit")
+  
 })
 .superRefine((data, ctx) => {
   const lang = languageList.languages.find((lang) => lang.id === data.language);
