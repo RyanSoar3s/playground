@@ -3,6 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { take, tap, map, catchError, of } from 'rxjs';
 import { Api } from '@core/services/api';
 import { Health } from '@core/services/health';
+import type { HealthResult } from '@models/health.model';
 
 export const healthGuard: CanActivateFn = () => {
   const api = inject(Api);
@@ -26,11 +27,7 @@ export const healthGuard: CanActivateFn = () => {
         status: "error",
         error: (typeof err === "object" && "message" in err) ? `${err.message}` : "unknown",
 
-      } satisfies {
-        status: "error" | "ok";
-        error: string | null;
-
-      };
+      } satisfies HealthResult;
 
       health.setHealth(response);
       router.navigate([ "/error" ]);
