@@ -15,6 +15,13 @@ import { Router } from '@angular/router';
 import { ExecutionWebSocket } from '@core/services/websocket';
 import { Subscription } from 'rxjs';
 
+const CODE_TEMPLATES: Record<LanguageLabels, string> = {
+  JavaScript: `console.log("Hello, playground!");`,
+  TypeScript: `const greeting: string = "Hello, playground!";
+console.log(greeting);`,
+  Python: `print("Hello, playground!")`
+};
+
 @Component({
   selector: 'app-code-editor',
   imports: [
@@ -186,6 +193,7 @@ export class CodeEditor implements OnDestroy {
           this.languagesLabel.set(initialLanguage.label);
           this.languageRuntimes.set(runtimes);
           this.languageRuntimeSelected.set(initialRuntime.type);
+          this.code.set(CODE_TEMPLATES[initialLanguage.label] ?? "");
 
         }
 
@@ -388,10 +396,11 @@ export class CodeEditor implements OnDestroy {
   }
 
   private changeLanguage(label: string): void {
-    this.code.set("");
+    const langLabel = label as LanguageLabels;
+    this.code.set(CODE_TEMPLATES[langLabel] ?? "");
     this.outputSignal.set([]);
     this.durationMsSignal.set(undefined);
-    this.languagesLabel.set(label as LanguageLabels);
+    this.languagesLabel.set(langLabel);
 
     const langs = this.languages();
 

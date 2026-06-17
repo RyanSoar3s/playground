@@ -38,6 +38,7 @@
   @include relative;
   @include flex-full-center;
   @include flex-col;
+  @include justify-between;
 
 }
 
@@ -57,7 +58,7 @@
   @include justify-between;
   @include flex-wrap;
   @include gap($gap: 27px);
-  @include m($margin: 30px 0px);
+  @include m($margin: 25px 0px);
   @include p($padding: 0px 40px);
 
   &__box-selections {
@@ -246,11 +247,11 @@
 }
 
 .code-editor {
-  @include dimension($height: 80%, $width: 100%);
+  @include dimension($height: 100%, $width: 100%);
   @include flex-full-center;
 
   &__editor, &__output {
-    @include dimension($height: 800px !important, $width: 50%);
+    @include dimension($height: 750px !important, $width: 50%);
 
   }
 
